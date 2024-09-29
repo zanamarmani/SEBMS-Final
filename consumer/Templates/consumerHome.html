@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ consumer.name }}</h1>
+
+    <!-- Consumer Profile Section -->
+    <h2>Profile Information</h2>
+    <p><strong>Consumer Number:</strong> {{ consumer.consumer_number }}</p>
+    <p><strong>Meter Number:</strong> {{ consumer.meter_number }}</p>
+    <p><strong>Area Number:</strong> {{ consumer.area_number }}</p>
+    <p><strong>Tariff:</strong> {{ consumer.get_tariff_display }}</p>
+    <p><strong>Approval Status:</strong> {{ consumer.approved }}</p>
+
+    <!-- Bill History Section -->
+    <h2>Your Bills</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Consumed Units</th>
+                <th>Amount Due</th>
+                <th>Paid</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills %}
+            <tr>
+                <td>{{ bill.month }}</td>
+                <td>{{ bill.consumed_units }}</td>
+                <td>{{ bill.amount_due }}</td>
+                <td>{{ bill.paid|yesno:"Yes,No" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Payment History Section -->
+    <h2>Payment History</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Amount Paid</th>
+                <th>Payment Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr>
+                <td>{{ payment.amount_paid }}</td>
+                <td>{{ payment.payment_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Online Payment Section -->
+    <h2>Make a Payment</h2>
+    <p>You can pay your bill online through our payment gateway.</p>
+    <form action="{% url 'consumer:payment_gateway' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Pay Now</button>
+    </form>
+</body>
+</html>

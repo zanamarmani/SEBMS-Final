@@ -1,0 +1,19 @@
+<!-- payment/payment_gateway.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway</title>
+</head>
+<body>
+    <h1>Online Payment</h1>
+    <p>Proceed with your payment here.</p>
+    <h1>Pay Online</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Pay</button>
+</form>
+</body>
+</html>

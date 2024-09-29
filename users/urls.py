@@ -1,0 +1,16 @@
+from django.urls import path,include
+from . import views
+from django.contrib.auth import views as auth_views
+
+urlpatterns = [
+    path('', views.user_login, name='login'),
+    path('sdo_dashboard/', include('SDO.urls')),
+    path('office_staff/', include('officestaff.urls')),
+    path('meter_reader/', include('meterreader.urls')),
+    path('consumer/', include('consumer.urls')),
+    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
+]

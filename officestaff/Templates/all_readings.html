@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>All Meter Readings</title>
+  </head>
+  <body>
+    <h1>All Meter Readings and Bills</h1>
+    
+    {% for message in messages %}
+      <p>{{message}}</p>
+    {% endfor %}
+      
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Meter Number</th>
+          <th>Last Reading</th>
+          <th>New Reading</th>
+          <th>Reading Date</th>
+          <th>Consumed Units</th>
+          <th>Amount Due</th>
+          <th>Paid</th>
+          <th>Generate Bill</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reading, bill in bills %}
+    <tr>
+        <td>{{ reading.meter_number }}</td>
+        <td>{{ reading.last_reading }}</td>
+        <td>{{ reading.new_reading }}</td>
+        <td>{{ reading.reading_date }}</td>
+        <td>{{ bill.consumed_units }}</td>
+        <td>{{ bill.amount_due }}</td>
+        <td>{{ bill.paid }}</td>
+        <td>
+            <form action="{% url 'officestaff:generate_bill' reading.meter_number %}" method="post">
+              {% csrf_token %}
+              <button type="submit">Generate Bill</button>
+            </form>
+        </td>
+    </tr>
+{% empty %}
+    <tr>
+        <td colspan="8">No meter readings found.</td>
+    </tr>
+{% endfor %}
+
+      </tbody>
+    </table>
+  </body>
+</html>

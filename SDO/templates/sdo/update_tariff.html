@@ -1,0 +1,14 @@
+<!-- templates/sdo/update_tariff.html -->
+<h2>Update Tariffs</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Tariffs</button>
+</form>
+
+<h3>Current Tariffs</h3>
+<ul>
+    {% for tariff in tariffs %}
+        <li>{{ tariff.tariff_type }}: Tier 1: {{ tariff.tier_1_rate }} | Tier 2: {{ tariff.tier_2_rate }} | Tier 3: {{ tariff.tier_3_rate }} | Above Tier: {{ tariff.above_tier_rate }}</li>
+    {% endfor %}
+</ul>

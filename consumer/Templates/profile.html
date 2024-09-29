@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Consumer Profile</title>
+</head>
+<body>
+    <h1>Consumer Profile</h1>
+
+    <h2>Consumer Information</h2>
+    <p>Name: {{ consumer.name }}</p>
+    <p>Consumer Number: {{ consumer.consumer_number }}</p>
+    <p>Meter Number: {{ consumer.meter_number }}</p>
+    <p>Tariff: {{ consumer.get_tariff_display }}</p>
+    <p>Approved: {{ consumer.approved }}</p>
+
+    <h2>Bills</h2>
+    <table border="1">
+        <tr>
+            <th>Month</th>
+            <th>Consumed Units</th>
+            <th>Amount Due</th>
+            <th>Paid</th>
+            <th>Action</th>
+        </tr>
+        {% for bill in bills %}
+        <tr>
+            <td>{{ bill.month }}</td>
+            <td>{{ bill.consumed_units }}</td>
+            <td>{{ bill.amount_due }}</td>
+            <td>{{ bill.paid }}</td>
+            <td>
+                {% if not bill.paid %}
+                    <form method="POST" action="{% url 'pay_bill' bill.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Pay</button>
+                    </form>
+                {% else %}
+                    Paid
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No bills found for this consumer.</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Payments</h2>
+    <table border="1">
+        <tr>
+            <th>Bill</th>
+            <th>Amount Paid</th>
+            <th>Payment Date</th>
+        </tr>
+        {% for payment in payments %}
+        <tr>
+            <td>{{ payment.bill.month }}</td>
+            <td>{{ payment.amount_paid }}</td>
+            <td>{{ payment.payment_date }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No payments found for this consumer.</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
