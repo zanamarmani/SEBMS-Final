@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    /* Container Padding */
+    .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /* Form Styling */
+    form .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Card Styling */
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    /* Tariff List Styling */
+    .list-group-item {
+        font-size: 1.2rem;
+        padding: 10px;
+    }
+
+    /* Align Tariffs Content */
+    .list-group-item span {
+        margin-left: 15px;
+    }
+
+    /* Badge Styling */
+    .badge {
+        font-size: 1rem;
+        padding: 5px 10px;
+    }
+
+    /* Button Styling */
+    .btn {
+        padding: 10px 15px;
+        font-size: 1.2rem;
+    }
+
+    /* Shadow Effects */
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
+<body>
+    <div class="container mt-5">
+        <!-- Update Tariffs Section -->
+        <div class="card shadow-lg mb-5">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Update Tariffs</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block">Update Tariffs</button>
+                </form>
+            </div>
+        </div>
+    
+        <!-- Current Tariffs Section -->
+        <div class="card shadow-lg">
+            <div class="card-header bg-dark text-white">
+                <h3 class="mb-0">Current Tariffs</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for tariff in tariffs %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>{{ tariff.tariff_type }}:</strong> 
+                            <span>Tier 1: <span class="badge badge-primary">{{ tariff.tier_1_rate }}</span></span>
+                            <span>Tier 2: <span class="badge badge-warning">{{ tariff.tier_2_rate }}</span></span>
+                            <span>Tier 3: <span class="badge badge-danger">{{ tariff.tier_3_rate }}</span></span>
+                            <span>Above Tier: <span class="badge badge-secondary">{{ tariff.above_tier_rate }}</span></span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+<!-- templates/sdo/update_tariff.html -->
+<!-- <h2>Update Tariffs</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Tariffs</button>
+</form>
+
+<h3>Current Tariffs</h3>
+<ul>
+    {% for tariff in tariffs %}
+        <li>{{ tariff.tariff_type }}: Tier 1: {{ tariff.tier_1_rate }} | Tier 2: {{ tariff.tier_2_rate }} | Tier 3: {{ tariff.tier_3_rate }} | Above Tier: {{ tariff.above_tier_rate }}</li>
+    {% endfor %}
+</ul> -->
