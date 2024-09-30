@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Consumer</title>
+</head>
+<body>
+    <h1>Register Consumer</h1>
+    <p>message {{message}}</p>
+    <form method="post" action="{% url 'officestaff:registerconsumer' %}">
+        {% csrf_token %}
+        <label for="name">Consumer Name:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="consumer_number">Consumer Number:</label><br>
+        <input type="text" id="consumer_number" name="consumer_number" required><br><br>
+
+        <label for="consumer_number">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="meter_number">Meter Number:</label><br>
+        <input type="text" id="meter_number" name="meter_number" required><br><br>
+
+        <label for="area_number">Area Number:</label><br>
+        <input type="text" id="area_number" name="area_number" required><br><br>
+
+        <label for="tariff">Tariff:</label><br>
+        <select id="tariff" name="tariff" required>
+            <option value="domestic">Domestic</option>
+            <option value="commercial">Commercial</option>
+            <option value="industrial">Industrial</option>
+        </select><br><br>
+
+        {% if errors %}
+            <ul>
+                {% for field, error_list in errors.items %}
+                    <li>{{ field }}: {{ error_list|join:", " }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>
