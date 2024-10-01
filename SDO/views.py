@@ -10,7 +10,7 @@ from .models import Tariff
 from .forms import TariffForm
 
 from consumer.models import Consumer
-from .forms import UserForm
+from users.forms import UserForm
 def dashboard(request):
     return render(request, 'sdo/dashboard.html')
 

@@ -36,11 +36,11 @@ def register_consumer(request):
         tariff = request.POST.get('tariff')
 
         # Check if a User with this username already exists
-        if User.objects.filter(username=consumer_number).exists():
+        if User.objects.filter(email=consumer_number+'@gmail.com').exists():
             return HttpResponse('A user with this consumer number already exists. Please use a different consumer number.')
 
         # Create a User object
-        user = User.objects.create_user(username=consumer_number, password=password, is_consumer=True)
+        user = User.objects.create_user(email=consumer_number+'@gmail.com', password=password, is_consumer=True)
         
         # Now create the Consumer object, associating it with the created User
         consumer = Consumer(

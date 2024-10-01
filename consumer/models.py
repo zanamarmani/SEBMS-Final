@@ -11,7 +11,7 @@ class Consumer(models.Model):
     ]
 
     # Fields
-    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Linking Consumer to User model
+    user = models.OneToOneField(User, null=True,on_delete=models.CASCADE,related_name='consumer')  # Linking Consumer to User model
     name = models.CharField(max_length=100)  # Consumer's name
     consumer_number = models.CharField(max_length=100, unique=True)  # Unique consumer number
     meter_number = models.CharField(max_length=100, unique=True)  # Unique meter number
