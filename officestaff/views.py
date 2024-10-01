@@ -64,7 +64,7 @@ def list_consumers(request):
     return render(request, 'list_consumers.html', {'consumers': consumers})
 
 
-def all_readings(request):
+def all_readings(request): 
     readings = MeterReading.objects.all()
     bills = []
 
@@ -79,13 +79,16 @@ def all_readings(request):
                 # Calculate the bill based on the tariff
                 amount_due = calculate_bill(consumed_units, tariff)
 
-                # Process and save the bill
+                # Get the first day of the current month
                 current_month = timezone.now().date().replace(day=1)
+
+                # Check if a bill for this consumer and month already exists
                 bill, created = Bill.objects.update_or_create(
                     consumer=consumer,
                     month=current_month,
                     defaults={'amount_due': amount_due, 'consumed_units': consumed_units}
                 )
+                
                 # Append both the reading and the bill as a tuple
                 bills.append((reading, bill))
 
