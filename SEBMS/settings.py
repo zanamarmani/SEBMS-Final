@@ -130,3 +130,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 SESSION_COOKIE_SECURE = False  # Set this to True in production (HTTPS)
 CSRF_COOKIE_SECURE = False  # Set this to True in production (HTTPS)
+# Email configuration for development
+
+
