@@ -16,6 +16,8 @@ from bill.models import Bill, Bill_Details
 from SDO.utills import calculate_bill
 from datetime import date
 
+from .fire_base_utils import fetch_meter_readings
+
 def Home(request):
     consumers = Consumer.objects.all()  # Fetch all consumers from the database
     return render(request, 'officeStaffHome.html', {'consumers': consumers})
@@ -61,7 +63,6 @@ def register_consumer(request):
 
     # Pass the available tariffs to the template for selection in the form
     tariffs = Tariff.objects.all()
-
     return render(request, 'register_consumer.html', {'tariffs': tariffs}) 
 
 def list_consumers(request):
@@ -122,3 +123,9 @@ def generate_bill(request, meter_number):
 
     messages.success(request, f'Bill for consumer {consumer.name} has been generated successfully!')
     return redirect('officestaff:all_readings')
+
+def Get_All_Readings(request):
+    # Fetch meter readings from Firebase
+    meter_readings = fetch_meter_readings()
+    # Fetch all bills to display on the dashboard
+    return render(request, 'officestaff/dashboard.html', {'meter_readings': meter_readings})
