@@ -1,14 +1,30 @@
-<!-- templates/sdo/update_tariff.html -->
-<h2>Update Tariffs</h2>
-<form method="POST">
+<form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update Tariffs</button>
-</form>
-
-<h3>Current Tariffs</h3>
-<ul>
-    {% for tariff in tariffs %}
-        <li>{{ tariff.tariff_type }}: Tier 1: {{ tariff.tier_1_rate }} | Tier 2: {{ tariff.tier_2_rate }} | Tier 3: {{ tariff.tier_3_rate }} | Above Tier: {{ tariff.above_tier_rate }}</li>
-    {% endfor %}
-</ul>
+    
+    <!-- Tariff Type (dropdown or text input) -->
+    <label for="tariff_type">Tariff Type:</label>
+    <input type="text" name="tariff_type" id="tariff_type" value="{{ tariff.tariff_type }}">
+    
+    <!-- Price for first 100 units -->
+    <label for="price_100">Price for first 100 units:</label>
+    <input type="number" step="0.01" name="price_100" id="price_100" value="{{ tariff.price_100 }}">
+    
+    <!-- Price for 100-200 units -->
+    <label for="price_200">Price for 100-200 units:</label>
+    <input type="number" step="0.01" name="price_200" id="price_200" value="{{ tariff.price_200 }}">
+    
+    <!-- Price for 200-300 units -->
+    <label for="price_300">Price for 200-300 units:</label>
+    <input type="number" step="0.01" name="price_300" id="price_300" value="{{ tariff.price_300 }}">
+    
+    <!-- Price for units above 300 -->
+    <label for="price_above">Price for units above 300:</label>
+    <input type="number" step="0.01" name="price_above" id="price_above" value="{{ tariff.price_above }}">
+  
+    <!-- Button to update the tariff -->
+    <button type="submit">Update Tariff</button>
+  
+    <!-- Button to delete the tariff -->
+    <button type="submit" name="delete" value="delete">Delete Tariff</button>
+  </form>
+  
