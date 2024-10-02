@@ -27,37 +27,42 @@ def RegisterConsumer(request):
 
 def register_consumer(request):
     if request.method == 'POST':
-        # Assuming you're getting these fields from the form
+        # Collect form data
         password = request.POST.get('password')
         name = request.POST.get('name')
         consumer_number = request.POST.get('consumer_number')
         meter_number = request.POST.get('meter_number')
         area_number = request.POST.get('area_number')
-        tariff = request.POST.get('tariff')
+        tariff_type = request.POST.get('tariff')  # Get the selected tariff type from the form
 
-        # Check if a User with this username already exists
-        if User.objects.filter(email=consumer_number+'@gmail.com').exists():
+        # Check if a User with this email already exists
+        if User.objects.filter(email=consumer_number + '@gmail.com').exists():
             return HttpResponse('A user with this consumer number already exists. Please use a different consumer number.')
 
         # Create a User object
-        user = User.objects.create_user(email=consumer_number+'@gmail.com', password=password, is_consumer=True)
-        
-        # Now create the Consumer object, associating it with the created User
+        user = User.objects.create_user(email=consumer_number + '@gmail.com', password=password, is_consumer=True)
+
+        # Fetch the selected Tariff object
+        tariff = get_object_or_404(Tariff, tariff_type=tariff_type)
+
+        # Create the Consumer object, associating it with the created User and selected Tariff
         consumer = Consumer(
             user=user,
             name=name,
             consumer_number=consumer_number,
             meter_number=meter_number,
             area_number=area_number,
-            tariff=tariff
+            tariff=tariff,  # Assign the tariff to the consumer
         )
-        
+
         consumer.save()  # Save the Consumer to the database
-        
+
         return HttpResponse('Registered successfully.')  # Redirect to a success page or home page
 
-    return render(request, 'register_consumer.html')  # Render the registration form
+    # Pass the available tariffs to the template for selection in the form
+    tariffs = Tariff.objects.all()
 
+    return render(request, 'register_consumer.html', {'tariffs': tariffs}) 
 
 def list_consumers(request):
     consumers = Consumer.objects.all()
