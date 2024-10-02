@@ -126,9 +126,9 @@
 
             <label for="tariff">Tariff:</label>
             <select id="tariff" name="tariff" required>
-                <option value="domestic">Domestic</option>
-                <option value="commercial">Commercial</option>
-                <option value="industrial">Industrial</option>
+                {% for tariff in tariffs %}
+            <option value="{{ tariff.tariff_type }}">{{ tariff.get_tariff_type_display }}</option>
+        {% endfor %}
             </select>
 
             {% if errors %}
