@@ -64,79 +64,56 @@ def list_consumers(request):
     return render(request, 'list_consumers.html', {'consumers': consumers})
 
 
-def all_readings(request): 
+def all_readings(request):
+    """
+    View to display all readings and their corresponding bills.
+    """
     readings = MeterReading.objects.all()
     bills = []
 
     for reading in readings:
         consumer = Consumer.objects.filter(meter_number=reading.meter_number).first()
         if consumer:
-            consumed_units = reading.new_reading - reading.last_reading
-            # Get the consumer's tariff object
-            tariff = Tariff.objects.filter(tariff_type=consumer.tariff).first()
+            # Fetch the existing bill for this consumer and the current month
+            current_month = timezone.now().date().replace(day=1)
+            bill = Bill.objects.filter(consumer=consumer, month=current_month).first()
 
-            if tariff:
-                # Calculate the bill based on the tariff
-                amount_due = calculate_bill(consumed_units, tariff)
-
-                # Get the first day of the current month
-                current_month = timezone.now().date().replace(day=1)
-
-                # Check if a bill for this consumer and month already exists
-                bill, created = Bill.objects.update_or_create(
-                    consumer=consumer,
-                    month=current_month,
-                    defaults={'amount_due': amount_due, 'consumed_units': consumed_units}
-                )
-                
-                # Append both the reading and the bill as a tuple
-                bills.append((reading, bill))
+            # Append the reading and the existing bill as a tuple for display
+            bills.append((reading, bill))
 
     return render(request, 'all_readings.html', {'bills': bills})
-
 def generate_bill(request, meter_number):
-    # Fetch the consumer object
+    """
+    View to generate a bill for a specific consumer based on meter readings.
+    """
     consumer = get_object_or_404(Consumer, meter_number=meter_number)
-    
-    # You should retrieve the meter readings here.
-    # For this example, assume we have consumed units and last reading.
-    # You can fetch these from your `MeterReading` model or directly calculate them.
-    readings = MeterReading.objects.all()
-    for reading in readings:
-        consumer = Consumer.objects.filter(meter_number=reading.meter_number).first()
-        if consumer:
-            consumed_units = reading.new_reading - reading.last_reading
+    reading = MeterReading.objects.filter(meter_number=meter_number).last()  # Get the latest reading
 
+    if not reading:
+        messages.error(request, "No meter reading found for this consumer.")
+        return redirect('officestaff:consumer_list')
+
+    consumed_units = reading.new_reading - reading.last_reading
     if consumed_units < 0:
         messages.error(request, "Consumed units cannot be negative. Please check meter readings.")
-        return redirect('officestaff:consumer_list')  # Redirect to the list of consumers or another page
+        return redirect('officestaff:consumer_list')
 
-    # Fetch the tariff type for the consumer (domestic, commercial, etc.)
-    tariff_type = Tariff.objects.filter(tariff_type=consumer.tariff).first()
+    # Get the consumer's tariff and calculate the bill
+    tariff = Tariff.objects.filter(tariff_type=consumer.tariff).first()
+    if not tariff:
+        messages.error(request, "Tariff not found for this consumer.")
+        return redirect('officestaff:list_consumers')
 
-    # Calculate the bill using the updated tariff structure
-    bill_amount = calculate_bill(consumed_units, tariff_type)
-    
-    # Create a new Bill entry
+    bill_amount = calculate_bill(consumed_units, tariff)
+
+    # Create a new Bill entry for the current month
     bill = Bill.objects.create(
         consumer=consumer,
-        month=date.today(),  # Set the current date as the bill month
+        month=date.today(),  # Current month
         amount_due=bill_amount,
         consumed_units=consumed_units,
-        paid=False  # Set to False initially, to be updated upon payment
+        paid=False
     )
 
-    # Create a new Bill_Details entry (optional, if you need detailed breakdown)
-    # Bill_Details.objects.create(
-    #     consumer_no=consumer.consumer_number,
-    #     meter_no=consumer.meter_number,
-    #     new_reading=new_reading,
-    #     last_reading=last_reading,
-    #     Date_of_Reading=date.today(),
-    #     bill_amount=bill_amount,
-    #     due_date=date.today()  # Set due date as required
-    # )
-
-    # Add a success message and redirect to another page
     messages.success(request, f'Bill for consumer {consumer.name} has been generated successfully!')
-    return redirect('officestaff:all_readings')  # Redirect to the bill list page or another page
+    return redirect('officestaff:all_readings')

@@ -131,10 +131,16 @@ AUTH_USER_MODEL = 'users.User'
 SESSION_COOKIE_SECURE = False  # Set this to True in production (HTTPS)
 CSRF_COOKIE_SECURE = False  # Set this to True in production (HTTPS)
 
-
+# for email to set password
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'your-email@gmail.com'
 EMAIL_HOST_PASSWORD = 'your-app-specific-password'  # Use the app password here
+
+
+#Jazzcash payment merchant account here
+JAZZCASH_MERCHANT_ID = 'YOUR_SANDBOX_MERCHANT_ID'
+JAZZCASH_PASSWORD = 'YOUR_SANDBOX_PASSWORD'
+JAZZCASH_INTEGRITY_SALT = 'YOUR_SANDBOX_INTEGRITY_SALT'

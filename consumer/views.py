@@ -22,9 +22,9 @@ def consumer_home(request):
     else:
         return render(request, 'consumerHome.html', {'consumer': consumer, 'status': status})  # Render the consumer home page with the consumer's profile information and status
 
-def payment_gateway(request):
-    # Placeholder logic for the payment gateway
-    return render(request, 'pay_online.html')
+def payment_gateway(request, bill_id):
+    bill = get_object_or_404(Bill, id=bill_id)
+    return render(request, 'pay_online.html', {'bill': bill})
 
 
 
