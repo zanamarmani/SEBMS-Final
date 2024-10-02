@@ -1,9 +1,27 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import User
 
-class LoginForm(AuthenticationForm):
-    def __init__(self, *args, **kwargs):
-        super(LoginForm, self).__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({'class': 'form-control'})
-        self.fields['password'].widget.attrs.update({'class': 'form-control'})
+# User registration form
+class UserForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['email', 'password1', 'password2', 'is_office_staff', 'is_meter_reader', 'is_consumer', 'is_sdo']
+        # You can customize labels if needed
+        labels = {
+            'email': 'Email Address',
+        }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+        return user
+
+# User login form
+class UserLoginForm(AuthenticationForm):
+    username = forms.EmailField(label="Email")  # Override to use email instead of username
+
+    class Meta:
+        model = User
+        fields = ['email', 'password']

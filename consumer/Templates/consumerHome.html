@@ -30,10 +30,17 @@
         <tbody>
             {% for bill in bills %}
             <tr>
-                <td>{{ bill.month }}</td>
-                <td>{{ bill.consumed_units }}</td>
-                <td>{{ bill.amount_due }}</td>
-                <td>{{ bill.paid|yesno:"Yes,No" }}</td>
+                <td>{{ bill.id }}</td>
+                <td>{{ bill.amount_due }} PKR</td>
+                <td>{{ bill.due_date }}</td>
+                <td>{{ bill.status }}</td>
+                <td>
+                    <!-- Payment Form for each bill -->
+                    <form action="{% url 'payment_gateway' bill.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">Pay Now</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -59,11 +66,5 @@
     </table>
 
     <!-- Online Payment Section -->
-    <h2>Make a Payment</h2>
-    <p>You can pay your bill online through our payment gateway.</p>
-    <form action="{% url 'consumer:payment_gateway' %}" method="POST">
-        {% csrf_token %}
-        <button type="submit">Pay Now</button>
-    </form>
 </body>
 </html>

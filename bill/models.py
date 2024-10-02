@@ -15,7 +15,7 @@ class Bill_Details(models.Model):
     def __str__(self):
         return f'{self.consumer_no} - {self.meter_no}'
 class Bill(models.Model):
-    consumer = models.ForeignKey(Consumer, on_delete=models.CASCADE)
+    consumer = models.ForeignKey(Consumer, on_delete=models.CASCADE,related_name='bills')
     month = models.DateField()
     amount_due = models.DecimalField(max_digits=10, decimal_places=2)
     paid = models.BooleanField(default=False)
