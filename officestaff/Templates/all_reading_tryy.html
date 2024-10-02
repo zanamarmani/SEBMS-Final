@@ -1,53 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<html>
+<head>
     <title>All Meter Readings</title>
-  </head>
-  <body>
-    <h1>All Meter Readings and Bills</h1>
-    
-    {% for message in messages %}
-      <p>{{message}}</p>
-    {% endfor %}
-      
-    <table border="1">
-      <thead>
-        <tr>
-          <th>Meter Number</th>
-          <th>Last Reading</th>
-          <th>New Reading</th>
-          <th>Reading Date</th>
-          <th>Consumed Units</th>
-          <th>Amount Due</th>
-          <th>Paid</th>
-          <th>Generate Bill</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for reading, bill in bills %}
-    <tr>
-        <td>{{ reading.meter_number }}</td>
-        <td>{{ reading.last_reading }}</td>
-        <td>{{ reading.new_reading }}</td>
-        <td>{{ reading.reading_date }}</td>
-        <td>{{ bill.consumed_units }}</td>
-        <td>{{ bill.amount_due }}</td>
-        <td>{{ bill.paid }}</td>
-        <td>
-            <form action="{% url 'officestaff:generate_bill' reading.meter_number %}" method="post">
-              {% csrf_token %}
-              <button type="submit">Generate Bill</button>
-            </form>
-        </td>
-    </tr>
-{% empty %}
-    <tr>
-        <td colspan="8">No meter readings found.</td>
-    </tr>
-{% endfor %}
+</head>
+<body>
+    <h1>All Meter Readings</h1>
 
-      </tbody>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Serial No</th>
+                <th>Meter No</th>
+                <th>Reading</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reading in meter_readings %}
+            <tr>
+                <td>{{ reading.serial_no }}</td>
+                <td>{{ reading.meter_no }}</td>
+                <td>{{ reading.reading }}</td>
+                <td>{{ reading.date }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No meter readings available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
-  </body>
+</body>
 </html>

@@ -157,3 +157,15 @@ def sdo_dashboard_show_details(request):
     }
 
     return render(request, 'sdo/dashboard.html', context)
+
+def show_users(request):
+    # Fetch all users from the database
+    consumers = Consumer.objects.all()
+
+    # Count total office staff (assuming 'office_staff' is a role in the User model)
+    office_staffs = User.objects.filter(role='office_staff')
+    users = User.objects.all()
+    # Count total meter readers (assuming 'meter_reader' is a role in the User model)
+    meter_readers = User.objects.filter(role='meter_reader')
+
+    return render(request, 'sdo/show_users.html', { 'users': users, 'consumers': consumers,'meter_readers': meter_readers,'office_staffs': office_staffs})
