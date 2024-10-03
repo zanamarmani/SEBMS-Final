@@ -14,7 +14,7 @@ from users.models import User
 
 from bill.models import Bill, Bill_Details
 from SDO.utills import calculate_bill
-from datetime import date
+from datetime import datetime
 
 from .firebase_utils import fetch_meter_list 
 
@@ -130,3 +130,43 @@ def Get_All_Readings(request):
     # Fetch all bills to display on the dashboard
     return render(request, 'all_reading_tryy.html', {'meter_readings': meter_readings})
 
+def save_meter_data_to_db(request):
+    """
+    Fetch the meter data from Firebase and save it to the local database.
+    """
+    # Fetch meter data from Firebase
+    meter_data_list = fetch_meter_list()
+
+    # Process and save each meter reading into the local database
+    for meter_data in meter_data_list:
+        meter_id = meter_data.get('id', None)
+        date_str = meter_data.get('date', None)
+        serial_no = meter_data.get('serial_no', '')
+        reading = meter_data.get('reading', '')
+
+        # Convert date from string to Python date object
+        if date_str:
+            date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+        
+        try:
+            reading = float(reading)  # Convert the reading to float
+        except ValueError:
+            # Handle the case where the reading cannot be converted
+            continue
+        reading = int(round(reading))
+        # Save or update the meter data in the database
+        if meter_id and date_obj:
+            MeterReading.objects.update_or_create(
+                defaults={
+                    'meter_number': serial_no,
+                    'last_reading': 400,
+                    'new_reading': reading,
+                    'reading_date': date_obj
+                }
+            )
+
+    # After saving, retrieve the saved data to display it
+    meter_list = MeterReading.objects.all()
+
+    # Render the template with the saved meter data
+    return render(request, 'meter_data.html', {'meter_list': meter_list})
