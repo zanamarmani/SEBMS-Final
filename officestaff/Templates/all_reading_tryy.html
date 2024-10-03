@@ -9,8 +9,8 @@
     <table border="1">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Serial No</th>
-                <th>Meter No</th>
                 <th>Reading</th>
                 <th>Date</th>
             </tr>
@@ -18,8 +18,8 @@
         <tbody>
             {% for reading in meter_readings %}
             <tr>
+                <td>{{reading.id}}</td>
                 <td>{{ reading.serial_no }}</td>
-                <td>{{ reading.meter_no }}</td>
                 <td>{{ reading.reading }}</td>
                 <td>{{ reading.date }}</td>
             </tr>

@@ -5,6 +5,7 @@ from django.shortcuts import render
 
 from django.http import HttpResponse
 from SDO.models import Tariff
+from consumer.forms import ConsumerForm
 from consumer.models import Consumer
 from meterreader.models import MeterReading
 from django.shortcuts import render, get_object_or_404, redirect
@@ -14,9 +15,9 @@ from users.models import User
 
 from bill.models import Bill, Bill_Details
 from SDO.utills import calculate_bill
-from datetime import date
+from datetime import datetime
 
-from .fire_base_utils import fetch_meter_list 
+from .firebase_utils import fetch_meter_list 
 
 def Home(request):
     consumers = Consumer.objects.all()  # Fetch all consumers from the database
@@ -29,41 +30,14 @@ def RegisterConsumer(request):
 
 def register_consumer(request):
     if request.method == 'POST':
-        # Collect form data
-        password = request.POST.get('password')
-        name = request.POST.get('name')
-        consumer_number = request.POST.get('consumer_number')
-        meter_number = request.POST.get('meter_number')
-        area_number = request.POST.get('area_number')
-        tariff_type = request.POST.get('tariff')  # Get the selected tariff type from the form
+        form = ConsumerForm(request.POST)
+        if form.is_valid():
+            form.save()  # Save the consumer to the database with approved set to False
+            return HttpResponse('successfully send request to  register consumer')  # Redirect to a success page
+    else:
+        form = ConsumerForm()
 
-        # Check if a User with this email already exists
-        if User.objects.filter(email=consumer_number + '@gmail.com').exists():
-            return HttpResponse('A user with this consumer number already exists. Please use a different consumer number.')
-
-        # Create a User object
-        user = User.objects.create_user(email=consumer_number + '@gmail.com', password=password, is_consumer=True)
-
-        # Fetch the selected Tariff object
-        tariff = get_object_or_404(Tariff, tariff_type=tariff_type)
-
-        # Create the Consumer object, associating it with the created User and selected Tariff
-        consumer = Consumer(
-            user=user,
-            name=name,
-            consumer_number=consumer_number,
-            meter_number=meter_number,
-            area_number=area_number,
-            tariff=tariff,  # Assign the tariff to the consumer
-        )
-
-        consumer.save()  # Save the Consumer to the database
-
-        return HttpResponse('Registered successfully.')  # Redirect to a success page or home page
-
-    # Pass the available tariffs to the template for selection in the form
-    tariffs = Tariff.objects.all()
-    return render(request, 'register_consumer.html', {'tariffs': tariffs}) 
+    return render(request, 'register_consumer_try.html', {'form': form})
 
 def list_consumers(request):
     consumers = Consumer.objects.all()
@@ -129,3 +103,56 @@ def Get_All_Readings(request):
     meter_readings = fetch_meter_list()
     # Fetch all bills to display on the dashboard
     return render(request, 'all_reading_tryy.html', {'meter_readings': meter_readings})
+
+def save_meter_data_to_db(request):
+    """
+    Fetch the meter data from Firebase and save it to the local database.
+    """
+    # Fetch meter data from Firebase
+    meter_data_list = fetch_meter_list()
+
+    # Process and save each meter reading into the local database
+    for meter_data in meter_data_list:
+        meter_id = meter_data.get('id', None)
+        date_str = meter_data.get('date', None)
+        serial_no = meter_data.get('serial_no', '')
+        reading = meter_data.get('reading', '')
+
+        # Convert date from string to Python date object
+        if date_str:
+            date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+        
+        try:
+            reading = float(reading)  # Convert the reading to float
+        except ValueError:
+            # Handle the case where the reading cannot be converted
+            continue
+        reading = int(round(reading))
+        # Save or update the meter data in the database
+        if meter_id and date_obj:
+            MeterReading.objects.update_or_create(
+                defaults={
+                    'meter_number': serial_no,
+                    'last_reading': 400,
+                    'new_reading': reading,
+                    'reading_date': date_obj
+                }
+            )
+
+    # After saving, retrieve the saved data to display it
+    meter_list = MeterReading.objects.all()
+
+    # Render the template with the saved meter data
+    return render(request, 'meter_data.html', {'meter_list': meter_list})
+
+# views.py
+
+from django.views.generic import ListView
+
+class TariffListView(ListView):
+    model = Tariff
+    template_name = 'register_consumer.html'  # Path to your template
+    context_object_name = 'tariffs'  # This will be the name of the variable in your template
+
+    def get_queryset(self):
+        return Tariff.objects.all()

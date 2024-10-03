@@ -1,49 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register Consumer</title>
-</head>
-<body>
-    <h1>Register Consumer</h1>
-    <p>message {{message}}</p>
-    <form method="post" action="{% url 'officestaff:registerconsumer' %}">
+    <style>
+      /* General Styling */
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #eef2f7;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      /* Form Container */
+      .form-container {
+        background-color: #ffffffc9;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        text-align: center;
+        margin: 40px 0; /* Adding some space from top and bottom */
+      }
+
+      /* Header */
+      h1 {
+        font-size: 26px;
+        margin-bottom: 25px;
+        color: #333;
+      }
+
+      /* Form Input Fields */
+      label {
+        display: block;
+        text-align: left;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      input[type="text"],
+      input[type="password"],
+      select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="password"]:focus,
+      select:focus {
+        border-color: #4caf50;
+        outline: none;
+      }
+
+      /* Submit Button */
+      input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #3e8e41;
+      }
+
+      /* Error Messages */
+      .error-messages {
+        color: red;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      li {
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <h1>Register Consumer</h1>
+      <p>{{ message }}</p>
+      <form method="post" action="{% url 'officestaff:register_consumer' %}">
         {% csrf_token %}
-        <label for="name">Consumer Name:</label><br>
-        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="name">Consumer Name:</label>
+        {{ form.name }}  <!-- Custom rendering for 'name' field -->
 
-        <label for="consumer_number">Consumer Number:</label><br>
-        <input type="text" id="consumer_number" name="consumer_number" required><br><br>
+        <label for="consumer_number">Consumer Number:</label>
+        {{ form.consumer_number }}  <!-- Custom rendering for 'consumer_number' field -->
 
-        <label for="consumer_number">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+        <label for="password">Password:</label>
+        {{ form.password }}  <!-- Custom rendering for 'password' field -->
 
-        <label for="meter_number">Meter Number:</label><br>
-        <input type="text" id="meter_number" name="meter_number" required><br><br>
+        <label for="meter_number">Meter Number:</label>
+        {{ form.meter_number }}  <!-- Custom rendering for 'meter_number' field -->
 
-        <label for="area_number">Area Number:</label><br>
-        <input type="text" id="area_number" name="area_number" required><br><br>
+        <label for="area_number">Area Number:</label>
+        {{ form.area_number }}  <!-- Custom rendering for 'area_number' field -->
 
-        <label for="tariff">Tariff:</label><br>
-        <select id="tariff" name="tariff" required>
-            <option value="domestic">Domestic</option>
-            <option value="commercial">Commercial</option>
-            <option value="industrial">Industrial</option>
-        </select><br><br>
+        <label for="tariff">Select Tariff Type:</label>
+        {{ form.tariff }}  <!-- Custom rendering for 'tariff' dropdown -->
 
-        {% if errors %}
-            <ul>
-                {% for field, error_list in errors.items %}
-                    <li>{{ field }}: {{ error_list|join:", " }}</li>
-                {% endfor %}
-            </ul>
+        {% if form.non_field_errors %}
+        <div class="error-messages">
+          <ul>
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
         {% endif %}
 
-        <input type="submit" value="Register">
-    </form>
-</body>
+        <input type="submit" value="Register" />
+      </form>
+    </div>
+  </body>
 </html>
-
-
-

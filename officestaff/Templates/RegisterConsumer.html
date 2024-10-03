@@ -128,29 +128,14 @@
 
         <label for="area_number">Area Number:</label>
         <input type="text" id="area_number" name="area_number" required />
-{% comment %} checking if the tariff is available {% endcomment %}
-        {% if tariffs %}
-        <p>Tariffs are available:</p>
-        <ul>
-          {% for tariff in tariffs %}
-          <li>
-            {{ tariff.tariff_type }}: {{ tariff.get_tariff_type_display }}
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p>No tariffs available.</p>
-        {% endif %}
-
-        <label for="tariff">Tariff:</label>
-        <select id="tariff" name="tariff" required>
-          {% for tariff in tariffs %}
-          <option value="{{ tariff.tariff_type }}">
-            {{ tariff.get_tariff_type_display }}
-          </option>
-          {% endfor %}
-        </select>
-
+        <label for="tariff_type">Select Tariff Type:</label>
+        <input type="text" id="tariff_type" name="tariff" required>
+        {% comment %} <select name="tariff_type" id="tariff_type" required>
+            <option value="">-- Select a Tariff --</option>
+            <option value="domestic">domestic</option>
+            <option value="commercial">commercial</option>
+            <option value="industrial">industrial</option>
+        </select> {% endcomment %}
         {% if errors %}
         <div class="error-messages">
           <ul>
