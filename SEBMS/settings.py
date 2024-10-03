@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-t_u_^6byp$ja42m7a92j%+rmb7wg^nn=8lxb_^i7-xk!%gy-(2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 ALLOWED_HOSTS = []
@@ -149,4 +149,4 @@ JAZZCASH_MERCHANT_ID = 'YOUR_SANDBOX_MERCHANT_ID'
 JAZZCASH_PASSWORD = 'YOUR_SANDBOX_PASSWORD'
 JAZZCASH_INTEGRITY_SALT = 'YOUR_SANDBOX_INTEGRITY_SALT'
 #for free hosting
-ALLOWED_HOSTS = ['zanam.pythonanywhere.com']
+
