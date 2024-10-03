@@ -1,30 +1,45 @@
-# firebase_utils.py
-
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# Initialize Firebase Admin SDK
+# Initialize Firebase (ensure you have the credentials file)
 cred = credentials.Certificate('firebase_credentials/serviceAccountKey.json')
 firebase_admin.initialize_app(cred)
 
-# Initialize Firestore client
+# Firestore database reference
 db = firestore.client()
 
-def fetch_meter_readings():
+def fetch_meter_list():
     """
-    Fetch meter readings from Firebase Firestore.
+    Fetch the meter list from the 'meters' collection, document ID 'yourdoc'.
+    Returns a list of meters with fields: date, id, serial_no, and reading.
     """
-    readings_ref = db.collection('meter_readings')
-    readings = readings_ref.stream()
+    try:
+        # Reference to the document in the 'meters' collection
+        doc_ref = db.collection('meters').document('your_doc_id')
+        doc = doc_ref.get()
 
-    meter_readings = []
-    for reading in readings:
-        reading_data = reading.to_dict()
-        meter_readings.append({
-            'meter_number': reading_data['meter_number'],
-            'new_reading': reading_data['new_reading'],
-            'reading_date': reading_data['reading_date'],
-            'meter_reader_id': reading_data.get('meter_reader_id', None)
-        })
+        # Check if the document exists
+        if doc.exists:
+            data = doc.to_dict()
 
-    return meter_readings
+            # Assuming 'meter_list' is an array in the document
+            meter_list = data.get('meter_list', [])
+
+            # Extracting required fields from the meter list
+            processed_meter_list = []
+            for meter in meter_list:
+                processed_meter_list.append({
+                    'date': meter.get('date', ''),
+                    'id': meter.get('id', ''),
+                    'serial_no': meter.get('serial_no', ''),
+                    'reading': meter.get('reading', '')
+                })
+
+            return processed_meter_list
+        else:
+            print("Document does not exist")
+            return []
+
+    except Exception as e:
+        print(f"Error fetching meter list: {e}")
+        return []

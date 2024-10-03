@@ -8,6 +8,6 @@ urlpatterns = [
     path('register_consumer/', views.RegisterConsumer, name='register_consumer'),
     path('registerconsumer/', views.register_consumer, name='registerconsumer'),
     path('consumers/', views.list_consumers, name='list_consumers'),
-    path('all_readings/', views.all_readings, name='all_readings'),
+    path('all_readings/', views.Get_All_Readings, name='all_readings'),
     path('generate-bill/<str:meter_number>/', views.generate_bill, name='generate_bill'),
 ]
