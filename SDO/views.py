@@ -1,3 +1,5 @@
+from django.db import IntegrityError
+from django.http import HttpResponse
 from django.shortcuts import redirect, render,get_object_or_404
 
 # Create your views here.
@@ -70,46 +72,67 @@ def show_all_consumers(request):
 
 def show_all_users(request):
     users = User.objects.all()
-    return render(request, 'sdo/show_all_users.html', {'users': users})
+    return render(request,
+ 'sdo/show_all_users.html', {'users': users})
 
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
-from SDO.models import Tariff
-from django.db import IntegrityError
 
-def update_tariff(request, tariff_id):
-    # Fetch the tariff object based on the ID
-    tariff = get_object_or_404(Tariff, id=tariff_id)
+def update_tariff(request, tariff_id=None):
+    # Fetch all tariffs for display
+    all_tariffs = Tariff.objects.all()
+
+    # If a tariff_id is provided, try to fetch the specific tariff
+    if tariff_id:
+        tariff = Tariff.objects.filter(id=tariff_id).first()  # Use filter().first() to avoid 404 if not found
+    else:
+        tariff = None
+
+    # Get tariff choices from the model
+    tariff_choices = Tariff.TARIFF_CHOICES
 
     if request.method == 'POST':
-        # Check if the form is being submitted for deletion
-        if 'delete' in request.POST:
-            # Delete the tariff
-            tariff.delete()
-            return HttpResponse("Tariff deleted successfully.")
-
-        # Otherwise, process form for updating the tariff
+        # Otherwise, process form for updating or creating the tariff
         tariff_type = request.POST.get('tariff_type')
         price_100 = request.POST.get('price_100')
         price_200 = request.POST.get('price_200')
         price_300 = request.POST.get('price_300')
         price_above = request.POST.get('price_above')
 
-        # Try updating the tariff with the new values
+        # Try to create or update the tariff with the new values
         try:
-            tariff.tariff_type = tariff_type
-            tariff.price_100 = price_100
-            tariff.price_200 = price_200
-            tariff.price_300 = price_300
-            tariff.price_above = price_above
-            tariff.save()
-            return HttpResponse("Tariff updated successfully.")
+            if tariff:
+                # Update the existing tariff
+                tariff.tariff_type = tariff_type
+                tariff.price_100 = price_100
+                tariff.price_200 = price_200
+                tariff.price_300 = price_300
+                tariff.price_above = price_above
+                tariff.save()
+                return HttpResponse("Tariff updated successfully.")
+            else:
+                # Create a new tariff
+                new_tariff = Tariff(
+                    tariff_type=tariff_type,
+                    price_100=price_100,
+                    price_200=price_200,
+                    price_300=price_300,
+                    price_above=price_above,
+                )
+                new_tariff.save()
+                return HttpResponse("New tariff created successfully.")
         except IntegrityError:
             return HttpResponse("A tariff with this type already exists. Please choose a different type.")
+        except ValueError:
+            return HttpResponse("Invalid input. Please ensure all fields are filled out correctly.")
 
-    # Render the update form with the current tariff values
-    return render(request, 'sdo/update_tariff.html', {'tariff': tariff})
+    # Render the update form with the current tariff values (if updating) and list of all tariffs
+    return render(request, 'sdo/update_tariff.html', {
+        'tariff': tariff,
+        'tariff_choices': tariff_choices,
+        'all_tariffs': all_tariffs,
+    })
+
+
 
 def all_bills(request):
     # Fetch all bills from the database
