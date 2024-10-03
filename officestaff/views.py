@@ -16,7 +16,7 @@ from bill.models import Bill, Bill_Details
 from SDO.utills import calculate_bill
 from datetime import date
 
-from .fire_base_utils import fetch_meter_list 
+from .firebase_utils import fetch_meter_list 
 
 def Home(request):
     consumers = Consumer.objects.all()  # Fetch all consumers from the database
@@ -129,3 +129,4 @@ def Get_All_Readings(request):
     meter_readings = fetch_meter_list()
     # Fetch all bills to display on the dashboard
     return render(request, 'all_reading_tryy.html', {'meter_readings': meter_readings})
+
