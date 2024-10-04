@@ -15,7 +15,7 @@ from users.models import User
 
 from bill.models import Bill, Bill_Details
 from SDO.utills import calculate_bill
-from datetime import datetime
+from datetime import date, datetime
 
 from .firebase_utils import fetch_meter_list 
 
@@ -24,7 +24,8 @@ def Home(request):
     return render(request, 'officeStaffHome.html', {'consumers': consumers})
     
 def RegisterConsumer(request):
-    return render(request, 'RegisterConsumer.html')
+    tariffs=Tariff.tariff_type
+    return render(request, 'RegisterConsumer.html',{'tariffs':tariffs})
 # officeStaff/views.py
 
 
@@ -32,8 +33,11 @@ def register_consumer(request):
     if request.method == 'POST':
         form = ConsumerForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the consumer to the database with approved set to False
-            return HttpResponse('successfully send request to  register consumer')  # Redirect to a success page
+            form.save()
+            messages.success(request, "Consumer registered successfully.")
+            return redirect('officestaff:registerconsumer')  # Redirect to the same page after successful registration
+        else:
+            messages.error(request, "Error in registration. Please check the form.")
     else:
         form = ConsumerForm()
 
