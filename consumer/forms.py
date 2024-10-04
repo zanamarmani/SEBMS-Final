@@ -1,34 +1,28 @@
 from django import forms
 from .models import Consumer
+from users.models import User
 from SDO.models import Tariff
 
 class ConsumerForm(forms.ModelForm):
-    # Creating a select dropdown for Tariff
-    tariff = forms.ModelChoiceField(
-        queryset=Tariff.objects.all(),
-        empty_label="Select Tariff",
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-
+    # Password input for creating the User
+    password = forms.CharField(widget=forms.PasswordInput(), required=True)
+    
     class Meta:
         model = Consumer
-        fields = ['name', 'consumer_number', 'meter_number', 'area_number', 'tariff']  # 'approved' field removed from form
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter name'}),
-            'consumer_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter consumer number'}),
-            'meter_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter meter number'}),
-            'area_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter area number'}),
-        }
-
+        fields = ['name', 'consumer_number', 'meter_number', 'area_number', 'tariff']
+        
     def save(self, commit=True):
-        # Create a Consumer instance, but don't save it yet
+        # Save the consumer instance
         consumer = super().save(commit=False)
+
+        # Create and link a new User instance for the consumer
+        email = self.cleaned_data['consumer_number'] + "@example.com"  # Generate email based on consumer number or set appropriately
+        password = self.cleaned_data['password']
+        user = User.objects.create_user(email=email, password=password, is_consumer=True)
         
-        # Set approved to False
-        consumer.approved = False
-        
-        # Save the Consumer instance
+        # Link the user to the consumer
+        consumer.user = user
+
         if commit:
             consumer.save()
-
         return consumer

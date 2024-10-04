@@ -9,7 +9,7 @@ class Consumer(models.Model):
     consumer_number = models.CharField(max_length=100, unique=True)  # Unique consumer number
     meter_number = models.CharField(max_length=100, unique=True)  # Unique meter number
     area_number = models.CharField(max_length=100)  # Area number associated with the consumer
-    tariff = models.OneToOneField(Tariff, on_delete=models.CASCADE,null=True) # Tariff type
+    tariff = models.ForeignKey(Tariff, on_delete=models.CASCADE,null=True) # Tariff type
     approved = models.BooleanField(default=False)  # Approval status for the consumer
 
     # String representation of the Consumer instance

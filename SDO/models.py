@@ -10,7 +10,7 @@ class Tariff(models.Model):
         ('industrial', 'Industrial'),
     ]
     
-    tariff_type = models.CharField(max_length=10, choices=TARIFF_CHOICES, unique=True)
+    tariff_type = models.CharField(max_length=10, choices=TARIFF_CHOICES)
     
     # Fields to hold price tiers for each tariff
     price_100 = models.DecimalField(max_digits=10, decimal_places=2,default=3)  # Price for first 100 units
