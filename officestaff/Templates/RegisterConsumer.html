@@ -130,6 +130,13 @@
         <input type="text" id="area_number" name="area_number" required />
         <label for="tariff_type">Select Tariff Type:</label>
         <input type="text" id="tariff_type" name="tariff" required>
+        
+        
+        {% if tariffs %}
+          {{tariff_type}}
+        {% endif %}
+          
+          
         {% comment %} <select name="tariff_type" id="tariff_type" required>
             <option value="">-- Select a Tariff --</option>
             <option value="domestic">domestic</option>

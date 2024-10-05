@@ -105,40 +105,38 @@
   <body>
     <div class="form-container">
       <h1>Register Consumer</h1>
-      <p>{{ message }}</p>
-      <form method="post" action="{% url 'officestaff:register_consumer' %}">
+      <form method="post" action="{% url 'officestaff:registerconsumer' %}">
         {% csrf_token %}
-        
+    
         <label for="name">Consumer Name:</label>
-        {{ form.name }}  <!-- Custom rendering for 'name' field -->
-
+        {{ form.name }}
+    
         <label for="consumer_number">Consumer Number:</label>
-        {{ form.consumer_number }}  <!-- Custom rendering for 'consumer_number' field -->
-
+        {{ form.consumer_number }}
+    
         <label for="password">Password:</label>
-        {{ form.password }}  <!-- Custom rendering for 'password' field -->
-
+        {{ form.password }}
+    
         <label for="meter_number">Meter Number:</label>
-        {{ form.meter_number }}  <!-- Custom rendering for 'meter_number' field -->
-
+        {{ form.meter_number }}
+    
         <label for="area_number">Area Number:</label>
-        {{ form.area_number }}  <!-- Custom rendering for 'area_number' field -->
-
-        <label for="tariff">Select Tariff Type:</label>
-        {{ form.tariff }}  <!-- Custom rendering for 'tariff' dropdown -->
-
-        {% if form.non_field_errors %}
-        <div class="error-messages">
-          <ul>
-            {% for error in form.non_field_errors %}
-            <li>{{ error }}</li>
+        {{ form.area_number }}
+    
+        <label for="tariff">Tariff Type:</label>
+        {{ form.tariff }}
+    
+        <button type="submit">Register</button>
+    
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{{ message }}</li>
             {% endfor %}
-          </ul>
-        </div>
+        </ul>
         {% endif %}
-
-        <input type="submit" value="Register" />
-      </form>
+    </form>
+    
     </div>
   </body>
 </html>
