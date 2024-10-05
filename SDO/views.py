@@ -14,6 +14,10 @@ from .forms import TariffForm
 
 from consumer.models import Consumer
 from users.forms import UserForm
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def dashboard(request):
     tariff = Tariff.objects.first()  # or use a specific filter to fetch tariff
     return render(request, 'sdo/dashboard.html', {'tariff': tariff})

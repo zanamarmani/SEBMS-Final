@@ -180,8 +180,10 @@
                                     <li><a class="dropdown-item" href="settings.html">Settings</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="{%url 'logout'%}">Log Out</a></li>
+                                        <form action="{%url 'logout'%}" method="post">
+                                            {% csrf_token %}
+                                    <li><button type='submit' class="">Logout</button></li>
+                                        </form>
                                 </ul>
                             </div><!--//app-user-dropdown-->
                         </div>

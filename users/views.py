@@ -1,10 +1,8 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm  # Use Django's built-in form
 from django.urls import reverse  # To dynamically resolve URLs
-
 def user_login(request):
     # Nested function to handle redirection based on user role
     def redirect_to_dashboard(user):
