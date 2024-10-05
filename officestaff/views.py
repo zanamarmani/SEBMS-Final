@@ -192,19 +192,23 @@ def Generate_bill(request):
     """
     View to generate a bill for a specific consumer based on meter readings.
     """
-    readings = MeterReading.objects.filter(processed = False)  # Get all readings
+    readings = MeterReading.objects.filter(processed=False)  # Get all unprocessed readings
     for reading in readings:
         # Step 2: Find the associated consumer using the meter number
         try:
             consumer = Consumer.objects.get(meter_number=reading.meter_number)
         except Consumer.DoesNotExist:
             continue  # Skip if no matching consumer found
+
         # Step 3: Calculate the consumed units
         consumed_units = reading.new_reading - reading.last_reading
+
         # Step 4: Get the tariff details associated with the consumer
         tariff = consumer.tariff
+
         # Step 5: Calculate the bill amount
         bill_amount = calculate_bill(consumed_units, tariff)
+
         # Step 6: Create a new bill entry for the current month
         try:
             bill = Bill.objects.create(
@@ -219,8 +223,10 @@ def Generate_bill(request):
         except Exception as e:
             print(f"Error occurred while generating bill for consumer {consumer.name}: {str(e)}")
             continue  # Skip to the next consumer if there's an error
-        messages.success(request, f'Bill for consumer {consumer.name} has been generated successfully!')
-        return redirect('officestaff:all_readings')
-    readings1 = MeterReading.objects.filter(processed = True)
-    return render(request, 'all_readings.html',{'meter_list':readings1})
 
+    # Move the success message and redirect outside the loop
+    # messages.success(request, 'Bills have been generated successfully!')
+    # return redirect('officestaff:all_readings')
+
+    readings1 = MeterReading.objects.filter(processed=True)
+    return render(request, 'all_readings.html', {'meter_list': readings1})

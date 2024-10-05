@@ -177,13 +177,10 @@
                   <table class="table mb-0 text-left">
                     <thead>
                       <tr>
-                        <th class="cell">Order</th>
-                        <th class="cell">Product</th>
-                        <th class="cell">Customer</th>
-                        <th class="cell">Date</th>
-                        <th class="cell">Status</th>
-                        <th class="cell">Total</th>
-                        <th class="cell"></th>
+                        <th class="cell">Email</th>
+                        <th class="cell">Name</th>
+                        <th class="cell">Address</th>
+                        <th class="cell">Role</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -279,32 +276,36 @@
                   <table class="table mb-0 text-left">
                     <thead>
                       <tr>
-                        <th class="cell">Order</th>
-                        <th class="cell">Product</th>
-                        <th class="cell">Customer</th>
-                        <th class="cell">Date</th>
+                        <th class="cell">Name</th>
+                        <th class="cell">Consumer Number</th>
+                        <th class="cell">Meter Number</th>
+                        <th class="cell">Area Number</th>
+                        <th class="cell">Tariff</th>
                         <th class="cell">Status</th>
-                        <th class="cell">Total</th>
                         <th class="cell"></th>
                       </tr>
                     </thead>
                     <tbody>
+                      
+                      {% for consumer in consumers   %}
+ 
                       <tr>
-                        <td class="cell">#15345</td>
+                        <td class="cell">{{consumer.name}}</td>
                         <td class="cell">
-                          <span class="truncate">Consectetur adipiscing elit</span>
+                          <span class="truncate">{{consumer.consumer_number}}</span>
                         </td>
-                        <td class="cell">Dylan Ambrose</td>
+                        <td class="cell">{{consumer.meter_number}}</td>
                         <td class="cell">
-                          <span class="cell-data">16 Oct</span><span class="note">03:16 AM</span>
+                          {{consumer.tariff}}
                         </td>
                         <td class="cell">
-                          <span class="badge bg-warning">Pending</span>
+                          <span class="badge bg-warning">{{consumer.area_number}}</span>
                         </td>
-                        <td class="cell">$96.20</td>
-                        <td class="cell">
+                        <td class="cell">{{consumer.approved}}</td>
+                        {% comment %} <td class="cell">
                           <a class="btn-sm app-btn-secondary" href="#">View</a>
-                        </td>
+                        </td> {% endcomment %}
+                        {% endfor %}
                       </tr>
                     </tbody>
                   </table>

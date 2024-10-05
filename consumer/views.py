@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import timedelta, timezone
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Consumer
@@ -6,6 +6,9 @@ from bill.models import Bill, Payment
 
 @login_required
 def consumer_home(request):
+    bills = Bill.objects.all()
+    for bill in bills:
+        bill.due_date = bill.month + timedelta(days=10)
     consumer = get_object_or_404(Consumer, user=request.user)  # Get the consumer linked to the logged-in user
     status = consumer.approved
     # Fetch the consumer's bills and payment history
@@ -20,7 +23,7 @@ def consumer_home(request):
         }
         return render(request, 'consumerHome.html', context)
     else:
-        return render(request, 'consumerHome.html', {'consumer': consumer, 'status': status})  # Render the consumer home page with the consumer's profile information and status
+        return render(request, 'consumerHome.html', {'consumer': consumer, 'status': status , 'bills':bills})  # Render the consumer home page with the consumer's profile information and status
 
 def payment_gateway(request, bill_id):
     bill = get_object_or_404(Bill, id=bill_id)

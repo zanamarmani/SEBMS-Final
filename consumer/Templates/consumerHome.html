@@ -21,10 +21,12 @@
     <table border="1">
         <thead>
             <tr>
+                <th>ID</th>
+                <th>Amount Due</th>
+                <th>Bill Due Date</th>
                 <th>Month</th>
                 <th>Consumed Units</th>
-                <th>Amount Due</th>
-                <th>Paid</th>
+                <th>status</th>
             </tr>
         </thead>
         <tbody>
@@ -32,11 +34,20 @@
             <tr>
                 <td>{{ bill.id }}</td>
                 <td>{{ bill.amount_due }} PKR</td>
-                <td>{{ bill.due_date }}</td>
-                <td>{{ bill.status }}</td>
+                <td>{{ bill.due_date|date:"M d, Y" }}</td>
+                <td>{{ bill.month|date:"M" }}</td>
+                <td>{{ bill.consumed_units }}</td>
+                <td>
+                    {% if bill.paid %}
+                        Paid
+                    {% else %}
+                        Not Paid
+                    {% endif %}
+                </td>
+                
                 <td>
                     <!-- Payment Form for each bill -->
-                    <form action="{% url 'payment_gateway' bill.id %}" method="POST">
+                    <form action="{% url 'consumer:payment_gateway' bill.id %}" method="POST">
                         {% csrf_token %}
                         <button type="submit">Pay Now</button>
                     </form>

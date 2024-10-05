@@ -4,7 +4,7 @@ from users.models import User
 from SDO.models import Tariff
 class Consumer(models.Model):
     # Fields
-    user = models.OneToOneField(User, null=True,on_delete=models.CASCADE,related_name='consumer')  # Linking Consumer to User model
+    user = models.OneToOneField(User, null=True,on_delete=models.SET_NULL,related_name='consumer')  # Linking Consumer to User model
     name = models.CharField(max_length=100)  # Consumer's name
     consumer_number = models.CharField(max_length=100, unique=True)  # Unique consumer number
     meter_number = models.CharField(max_length=100, unique=True)  # Unique meter number
