@@ -60,10 +60,10 @@ def all_readings(request):
         if consumer:
             # Fetch the existing bill for this consumer and the current month
             current_month = timezone.now().date().replace(day=1)
-            bill = Bill.objects.filter(consumer=consumer, month=current_month).first()
+            bills = Bill.objects.filter(consumer=consumer, month=current_month).first()
 
             # Append the reading and the existing bill as a tuple for display
-            bills.append((reading, bill))
+            bills.append((reading, bills))
 
     return render(request, 'all_readings.html', {'bills': bills})
 def generate_bill(request, meter_number):
@@ -106,7 +106,7 @@ def Get_All_Readings(request):
     # Fetch meter readings from Firebase
     meter_readings = fetch_meter_list()
     # Fetch all bills to display on the dashboard
-    return render(request, 'all_reading_tryy.html', {'meter_readings': meter_readings})
+    return render(request, 'all_readings.html', {'meter_readings': meter_readings})
 
 def save_meter_data_to_db(request):
     """
@@ -117,31 +117,46 @@ def save_meter_data_to_db(request):
 
     # Process and save each meter reading into the local database
     for meter_data in meter_data_list:
-        meter_id = meter_data.get('id', None)
-        date_str = meter_data.get('date', None)
-        serial_no = meter_data.get('serial_no', '')
-        reading = meter_data.get('reading', '')
+        meter_id = meter_data.get('id', None)  # Unique meter ID from Firebase
+        date_str = meter_data.get('date', None)  # Date string
+        serial_no = meter_data.get('serial_no', '')  # Serial number of the meter
+        reading = meter_data.get('reading', '')  # Meter reading value
 
         # Convert date from string to Python date object
         if date_str:
             date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
-        
+
         try:
             reading = float(reading)  # Convert the reading to float
         except ValueError:
-            # Handle the case where the reading cannot be converted
-            continue
-        reading = int(round(reading))
-        # Save or update the meter data in the database
-        if meter_id and date_obj:
-            MeterReading.objects.update_or_create(
-                defaults={
-                    'meter_number': serial_no,
-                    'last_reading': 400,
-                    'new_reading': reading,
-                    'reading_date': date_obj
-                }
-            )
+            continue  # Skip this entry if reading is invalid
+
+        reading = int(round(reading))  # Round and convert to integer
+
+        # Retrieve the last reading for this meter using filter() and order by the most recent reading
+        last_reading_record = MeterReading.objects.filter(meter_number=serial_no).order_by('-reading_date').first()
+
+        if last_reading_record:
+            last_reading = last_reading_record.new_reading  # Use the most recent `new_reading`
+        else:
+            last_reading = 500  # Default last reading if no previous record exists
+
+        # Use get_or_create to avoid IntegrityError for unique meter_number
+        meter_reading, created = MeterReading.objects.get_or_create(
+            meter_number=serial_no,
+            defaults={
+                'last_reading': last_reading,
+                'new_reading': reading,
+                'reading_date': date_obj
+            }
+        )
+
+        if not created:
+            # If the record already exists, update it
+            meter_reading.last_reading = last_reading
+            meter_reading.new_reading = reading
+            meter_reading.reading_date = date_obj
+            meter_reading.save()
 
     # After saving, retrieve the saved data to display it
     meter_list = MeterReading.objects.all()
@@ -150,7 +165,20 @@ def save_meter_data_to_db(request):
     return render(request, 'meter_data.html', {'meter_list': meter_list})
 
 # views.py
+def all_bills(request):
+    # Fetch all bills from the database
+    bills = Bill.objects.all()
+    return render(request, 'all_bills.html', {'bills': bills})
 
+def paid_bills(request):
+    # Fetch paid bills from the database
+    bills = Bill.objects.filter(paid=True)
+    return render(request, 'paid_bills.html', {'bills': bills})
+
+def unpaid_bills(request):
+    # Fetch unpaid bills from the database
+    bills = Bill.objects.filter(paid=False)
+    return render(request, 'unpaid_bills.html', {'bills': bills})
 from django.views.generic import ListView
 
 class TariffListView(ListView):

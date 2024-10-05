@@ -71,6 +71,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'SDO.context_processors.tariff_processor',
+                'officestaff.context_processors.bill_processor',
             ],
         },
     },
@@ -150,3 +152,4 @@ JAZZCASH_PASSWORD = 'YOUR_SANDBOX_PASSWORD'
 JAZZCASH_INTEGRITY_SALT = 'YOUR_SANDBOX_INTEGRITY_SALT'
 #for free hosting
 
+LOGOUT_REDIRECT_URL = '/'
