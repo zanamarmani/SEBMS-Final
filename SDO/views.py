@@ -186,9 +186,9 @@ def show_users(request):
     consumers = Consumer.objects.count()
 
     # Count total office staff (assuming 'office_staff' is a role in the User model)
-    #office_staffs = User.objects.filter(role='office_staff')
-    #users = User.objects.all()
+    office_staffs = User.objects.filter(is_office_staff = True).count()
+    users = User.objects.count()
     # Count total meter readers (assuming 'meter_reader' is a role in the User model)
-    #meter_readers = User.objects.filter(role='meter_reader')
+    meter_readers = User.objects.filter(is_meter_reader=True).count()
 
-    return render(request, 'sdo/dashboard.html', {'consumers':consumers})
+    return render(request, 'sdo/dashboard.html', {'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
