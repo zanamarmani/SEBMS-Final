@@ -14,6 +14,7 @@ urlpatterns = [
     path('all_bills/', views.all_bills ,name='all_bills'),
     path('paid_bills/', views.paid_bills, name='paid_bills'),
     path('unpaid_bills/', views.unpaid_bills, name='unpaid_bills'),
+    path('show_users/', views.show_users,name='show_users'),
     
     
 ]
