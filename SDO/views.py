@@ -156,34 +156,15 @@ def unpaid_bills(request):
 
 def sdo_dashboard_show_details(request):
     # Count total consumers
-    total_consumers = Consumer.objects.count()
+    total_consumers = Consumer.objects.all()
 
     # Count total office staff (assuming 'office_staff' is a role in the User model)
-    total_office_staff = User.objects.filter(role='office_staff').count()
+    office_staff = User.objects.filter(is_office_staff=True)
 
     # Count total meter readers (assuming 'meter_reader' is a role in the User model)
-    total_meter_readers = User.objects.filter(role='meter_reader').count()
+    meter_readers = User.objects.filter(is_meter_reader=True)
 
-    # Count total number of bills
-    total_bills = Bill.objects.count()
-
-    # Fetch all, paid, and unpaid bills for further display (from the previous request)
-    all_bills = Bill.objects.all()
-    paid_bills = Bill.objects.filter(is_paid=True)
-    unpaid_bills = Bill.objects.filter(is_paid=False)
-
-    # Pass all counts and bills to the template
-    context = {
-        'total_consumers': total_consumers,
-        'total_office_staff': total_office_staff,
-        'total_meter_readers': total_meter_readers,
-        'total_bills': total_bills,
-        'all_bills': all_bills,
-        'paid_bills': paid_bills,
-        'unpaid_bills': unpaid_bills,
-    }
-
-    return render(request, 'sdo/dashboard.html', context)
+    return render(request, 'sdo/show_all_users.html',{'consumers': total_consumers,'office_staff': office_staff,'meter_readers': meter_readers})
 
 def show_users(request):
     # Fetch all users from the database
