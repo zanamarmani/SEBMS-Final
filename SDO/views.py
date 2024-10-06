@@ -20,7 +20,14 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def dashboard(request):
     tariff = Tariff.objects.first()  # or use a specific filter to fetch tariff
-    return render(request, 'sdo/dashboard.html', {'tariff': tariff})
+    consumers = Consumer.objects.count()
+
+    # Count total office staff (assuming 'office_staff' is a role in the User model)
+    office_staffs = User.objects.filter(is_office_staff = True).count()
+    users = User.objects.count()
+    # Count total meter readers (assuming 'meter_reader' is a role in the User model)
+    meter_readers = User.objects.filter(is_meter_reader=True).count()
+    return render(request, 'sdo/dashboard.html', {'tariff': tariff,'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
 
 
 def create_office_staff(request):
@@ -165,15 +172,3 @@ def sdo_dashboard_show_details(request):
     meter_readers = User.objects.filter(is_meter_reader=True)
 
     return render(request, 'sdo/show_all_users.html',{'consumers': total_consumers,'office_staff': office_staff,'meter_readers': meter_readers})
-
-def show_users(request):
-    # Fetch all users from the database
-    consumers = Consumer.objects.count()
-
-    # Count total office staff (assuming 'office_staff' is a role in the User model)
-    office_staffs = User.objects.filter(is_office_staff = True).count()
-    users = User.objects.count()
-    # Count total meter readers (assuming 'meter_reader' is a role in the User model)
-    meter_readers = User.objects.filter(is_meter_reader=True).count()
-
-    return render(request, 'sdo/dashboard.html', {'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
