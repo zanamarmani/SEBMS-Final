@@ -43,7 +43,7 @@ def register_consumer(request):
     else:
         form = ConsumerForm()
 
-    return render(request, 'register_consumer_try.html', {'form': form})
+    return render(request, 'RegisterConsumer.html', {'form': form})
 
 def list_consumers(request):
     consumers = Consumer.objects.all()
