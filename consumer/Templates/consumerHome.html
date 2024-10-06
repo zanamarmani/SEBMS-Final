@@ -7,9 +7,10 @@
 </head>
 <body>
     <h1>Welcome, {{ consumer.name }}</h1>
-
+    <a href="https://www.piac.com.pk/">link To PIA Website</a>
     <!-- Consumer Profile Section -->
     <h2>Profile Information</h2>
+    <a href="{% url 'consumer:show_profile'%}">Show Profile</a>
     <p><strong>Consumer Number:</strong> {{ consumer.consumer_number }}</p>
     <p><strong>Meter Number:</strong> {{ consumer.meter_number }}</p>
     <p><strong>Area Number:</strong> {{ consumer.area_number }}</p>

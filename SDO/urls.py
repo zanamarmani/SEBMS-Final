@@ -1,5 +1,6 @@
 from django.urls import path, include
 from .import views
+from .import utills
 app_name = 'SDO'
 urlpatterns = [
     path('', views.dashboard, name='dashboard' ),
@@ -14,5 +15,6 @@ urlpatterns = [
     path('all_bills/', views.all_bills ,name='all_bills'),
     path('paid_bills/', views.paid_bills, name='paid_bills'),
     path('unpaid_bills/', views.unpaid_bills, name='unpaid_bills'),
+    path('bills_data/', utills.bills_data, name='bills_data'),
 ]
 

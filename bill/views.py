@@ -10,3 +10,4 @@ def calculate_bill(request):
         # Here we need to calculate the bill for each consumer and add it to total_amount
 
     return render(request,'bill.html')
+

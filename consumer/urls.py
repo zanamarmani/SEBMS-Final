@@ -8,4 +8,6 @@ urlpatterns = [
     path('jazzcash_payment/<int:bill_id>/', views.jazzcash_payment, name='jazzcash_payment'),
     path('payment_success/', views.payment_success, name='payment_success'),
     path('payment_failed/', views.payment_failed, name='payment_failed'),
+    path('show_profile/', views.show_profile, name='show_profile'),
+    path('update_profile/', views.update_profile, name='update_profile'),
 ]

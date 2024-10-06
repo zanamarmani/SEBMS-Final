@@ -1,6 +1,9 @@
 from datetime import timedelta, timezone
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+
+from consumer.forms import ConsumerProfileForm
+from users.forms import UserForm
 from .models import Consumer
 from bill.models import Bill, Payment
 
@@ -83,3 +86,28 @@ def payment_success(request):
 def payment_failed(request):
     # Show an error page
     return render(request, 'payment_failed.html')
+
+@login_required
+def show_profile(request):
+    consumer = get_object_or_404(Consumer, user=request.user)
+    return render(request,'profile_consumer.html',{'consumer': consumer})
+
+@login_required
+def update_profile(request):
+    consumer = get_object_or_404(Consumer, user=request.user)
+    user = request.user
+    if request.method == 'POST':
+            user_form = UserForm(request.POST, instance=user)
+            consumer_form = ConsumerProfileForm(request.POST, instance=user.consumer)
+            if user_form.is_valid() and consumer_form.is_valid():
+                user_form.save()
+                consumer_form.save()
+                return redirect('show_profile')
+    else:
+        user_form = UserForm(instance=user)
+        consumer_form = ConsumerProfileForm(instance=user.consumer)
+    return render(request, 'profile_edit_data.html', {
+            'user_form': user_form,
+            'consumer_form': consumer_form,
+            'consumer': consumer
+            })

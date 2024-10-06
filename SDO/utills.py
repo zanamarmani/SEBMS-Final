@@ -56,3 +56,18 @@ def calculate_bill(consumed_units, tariff):
             break
     
     return total_bill
+
+from django.http import JsonResponse
+from bill.models import Bill  # Assuming you have a Bill model that tracks bills
+
+def bills_data(request):
+    total_bills = Bill.objects.all().count()
+    paid_bills = Bill.objects.filter(paid=True).count()  # Assuming 'status' field exists
+
+    data = {
+        'total_bills': 100,
+        'paid_bills': 50,
+        'labels': ['Total Bills', 'Paid Bills']
+    }
+
+    return JsonResponse(data)
