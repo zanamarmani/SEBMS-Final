@@ -16,7 +16,7 @@ class ConsumerForm(forms.ModelForm):
         consumer = super().save(commit=False)
 
         # Create and link a new User instance for the consumer
-        email = self.cleaned_data['consumer_number'] + "@example.com"  # Generate email based on consumer number or set appropriately
+        email = self.cleaned_data['consumer_number'] + "@gmail.com"  # Generate email based on consumer number or set appropriately
         password = self.cleaned_data['password']
         user = User.objects.create_user(email=email, password=password, is_consumer=True)
         

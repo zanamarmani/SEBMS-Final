@@ -6,12 +6,12 @@ from bill.models import Bill, Payment
 
 @login_required
 def consumer_home(request):
-    bills = Bill.objects.all()
-    for bill in bills:
-        bill.due_date = bill.month + timedelta(days=10)
     consumer = get_object_or_404(Consumer, user=request.user)  # Get the consumer linked to the logged-in user
     status = consumer.approved
     # Fetch the consumer's bills and payment history
+    bills = Bill.objects.filter(consumer=consumer)
+    for bill in bills:
+        bill.due_date = bill.month + timedelta(days=10)
     if status:
         bills = Bill.objects.filter(consumer=consumer).order_by('-month')
         payments = Payment.objects.filter(consumer=consumer).order_by('-payment_date')

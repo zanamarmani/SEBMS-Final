@@ -13,7 +13,7 @@
     <p><strong>Consumer Number:</strong> {{ consumer.consumer_number }}</p>
     <p><strong>Meter Number:</strong> {{ consumer.meter_number }}</p>
     <p><strong>Area Number:</strong> {{ consumer.area_number }}</p>
-    <p><strong>Tariff:</strong> {{ consumer.get_tariff_display }}</p>
+    <p><strong>Tariff:</strong> {{ consumer.tariff }}</p>
     <p><strong>Approval Status:</strong> {{ consumer.approved }}</p>
 
     <!-- Bill History Section -->
@@ -22,6 +22,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Consumer Number</th>
                 <th>Amount Due</th>
                 <th>Bill Due Date</th>
                 <th>Month</th>
@@ -33,6 +34,7 @@
             {% for bill in bills %}
             <tr>
                 <td>{{ bill.id }}</td>
+                <td>{{ bill.consumer.consumer_number }}</td>
                 <td>{{ bill.amount_due }} PKR</td>
                 <td>{{ bill.due_date|date:"M d, Y" }}</td>
                 <td>{{ bill.month|date:"M" }}</td>

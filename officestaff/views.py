@@ -51,23 +51,8 @@ def list_consumers(request):
 
 
 def all_readings(request):
-    """
-    View to display all readings and their corresponding bills.
-    """
     readings = MeterReading.objects.all()
-    bills = []
-
-    for reading in readings:
-        consumer = Consumer.objects.filter(meter_number=reading.meter_number).first()
-        if consumer:
-            # Fetch the existing bill for this consumer and the current month
-            current_month = timezone.now().date().replace(day=1)
-            bills = Bill.objects.filter(consumer=consumer, month=current_month).first()
-
-            # Append the reading and the existing bill as a tuple for display
-            bills.append((reading, bills))
-
-    return render(request, 'all_readings.html', {'bills': bills})
+    return render(request, 'all_readings.html', {'readings': readings})
 def generate_bill(request, meter_number):
     """
     View to generate a bill for a specific consumer based on meter readings.
@@ -135,6 +120,8 @@ def save_meter_data_to_db(request):
 
         reading = int(round(reading))  # Round and convert to integer
 
+        if MeterReading.objects.filter(meter_number=serial_no, reading_date=date_obj).exists():
+            continue 
         # Retrieve the last reading for this meter using filter() and order by the most recent reading
         last_reading_record = MeterReading.objects.filter(meter_number=serial_no).order_by('-reading_date').first()
 
@@ -158,13 +145,14 @@ def save_meter_data_to_db(request):
             meter_reading.last_reading = last_reading
             meter_reading.new_reading = reading
             meter_reading.reading_date = date_obj
+            meter_reading.processed= False
             meter_reading.save()
 
     # After saving, retrieve the saved data to display it
     meter_list = MeterReading.objects.all()
 
     # Render the template with the saved meter data
-    return render(request, 'all_readings.html', {'meter_list': meter_list})
+    return render(request, 'meter_data.html', {'meter_list': meter_list})
 
 # views.py
 def all_bills(request):
