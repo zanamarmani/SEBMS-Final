@@ -16,6 +16,8 @@ from users.models import User
 from bill.models import Bill, Bill_Details
 from SDO.utills import calculate_bill
 from datetime import date, datetime
+from django.core.mail import send_mail
+
 
 from .firebase_utils import fetch_meter_list 
 
@@ -173,12 +175,12 @@ def all_bills(request):
 def paid_bills(request):
     # Fetch paid bills from the database
     bills = Bill.objects.filter(paid=True)
-    return render(request, 'paid_bills.html', {'bills': bills})
+    return render(request, 'paid_bills.html', {'paid_bills': bills})
 
 def unpaid_bills(request):
     # Fetch unpaid bills from the database
     bills = Bill.objects.filter(paid=False)
-    return render(request, 'unpaid_bills.html', {'bills': bills})
+    return render(request, 'unpaid_bills.html', {'unpaid_bills': bills})
 from django.views.generic import ListView
 
 class TariffListView(ListView):
@@ -220,6 +222,14 @@ def Generate_bill(request):
             )
             reading.processed = True  # Mark the reading as processed
             reading.save()  # Save the changes to the database
+            if bill:
+                send_mail(
+                    'Bill Generation',
+                    f'Your bill for {consumer.name} is due on {bill.month}. Amount due: {bill.amount_due}',
+                    'zanam786armani@gmail.com',
+                    [consumer.email],
+                    fail_silently=False,
+                )
         except Exception as e:
             print(f"Error occurred while generating bill for consumer {consumer.name}: {str(e)}")
             continue  # Skip to the next consumer if there's an error
