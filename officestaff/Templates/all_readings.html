@@ -63,6 +63,41 @@
 				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#orders-cancelled" role="tab" aria-controls="orders-cancelled" aria-selected="false">Cancelled</a>
 				</nav> -->
 
+<<<<<<< HEAD
+      <div class="tab-content" id="orders-table-tab-content">
+        <div
+          class="tab-pane fade show active"
+          id="orders-all"
+          role="tabpanel"
+          aria-labelledby="orders-all-tab"
+        >
+          <div class="app-card app-card-orders-table shadow-sm mb-5">
+            <div class="app-card-body">
+              <div class="table-responsive">
+                <table class="table app-table-hover mb-0 text-left">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Reading Date</th>
+                      <th>Meter Number</th>
+                      <th>Last Reading</th>
+					  <th>New Reading</th>
+					  <th>Processed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for meter in meter_list %}
+                    <tr>
+						<td>{{meter.id}}</td>
+                      <td>{{ meter.reading_date }}</td>
+                      <td>{{ meter.meter_number }}</td>
+                      <td>{{ meter.last_reading }}</td>
+                      <td>{{ meter.new_reading }}</td>
+                      <td>{{meter.processed}}</td>
+                    </tr>
+                    {% endfor %}
+                    <!-- <tr>
+=======
 
 				<div class="tab-content" id="orders-table-tab-content">
 					<div class="tab-pane fade show active" id="orders-all" role="tabpanel"
@@ -93,6 +128,7 @@
                       </tr>
                       {% endfor %}
 											<!-- <tr>
+>>>>>>> 5ba1b071976e6fa02ee1af2cc04e6ba95b98910d
 												<td class="cell">#15345</td>
 												<td class="cell"><span class="truncate">Consectetur adipiscing elit</span></td>
 												<td class="cell">Dylan Ambrose</td>

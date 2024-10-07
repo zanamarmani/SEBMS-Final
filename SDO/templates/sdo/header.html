@@ -187,6 +187,9 @@
                                                 href="{% url 'SDO:show_all_users' %}">Show User</a></li>
                                         <li class="submenu-item"><a class="submenu-link {% if request.resolver_match.url_name == 'add_user' %}active{% endif %}"
                                                 href="{% url 'SDO:add_user' %}">Add User</a></li>
+                                                <li class="submenu-item"><a class="submenu-link"
+                                                    href="{% url 'SDO:line_graph' %}">show chart</a></li> 
+                    
                                         <!-- <li class="submenu-item"><a class="submenu-link" href="reset-password.html">Reset
                                             password</a></li>
                                     <li class="submenu-item"><a class="submenu-link" href="404.html">404 page</a></li> -->

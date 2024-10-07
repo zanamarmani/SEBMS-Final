@@ -88,7 +88,7 @@
                             <div class="app-card-header p-3">
                                 <div class="row justify-content-between align-items-center">
                                     <div class="col-auto">
-                                        <h4 class="app-card-title">Line Chart Example</h4>
+                                        <h4 class="app-card-title">Line Chart Example test</h4>
                                     </div><!--//col-->
                                     <div class="col-auto">
                                         <div class="card-header-action">
@@ -107,7 +107,9 @@
                                     </select>
                                 </div>
                                 <div class="chart-container">
-                                    <canvas id="canvas-linechart"></canvas>
+                                    {% comment %} <canvas id="canvas-linechart"></canvas> {% endcomment %}
+                                    <canvas id="myChart" width="400" height="200"></canvas>
+                                    <canvas id="canvas-barchart1" width="400" height="200"></canvas>   
                                 </div>
                             </div><!--//app-card-body-->
                         </div><!--//app-card-->
@@ -136,7 +138,9 @@
                                     </select>
                                 </div>
                                 <div class="chart-container">
-                                    <canvas id="canvas-barchart"></canvas>
+                                    <!-- Ensure the canvas IDs match what is used in the script -->
+                                            <canvas id="canvas-linechart1"></canvas>
+                                            <canvas id="canvas-barchart1"></canvas>
                                 </div>
                             </div><!--//app-card-body-->
                         </div><!--//app-card-->

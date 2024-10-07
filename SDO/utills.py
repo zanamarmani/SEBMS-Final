@@ -1,4 +1,5 @@
 # utils.py (or wherever your utility functions are)
+from django.shortcuts import render
 from .models import Tariff
 
 # def calculate_bill(consumed_units, tariff_type):
@@ -71,3 +72,10 @@ def bills_data(request):
     }
 
     return JsonResponse(data)
+
+def line_chart(request):
+    labels = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']
+    data = [10,25,30,70,50,60]
+    data2 = [0,10,30,45,50,70]
+    return render(request, 'sdo/dashboard.html', {'labels': labels, 'data': data,'data2': data2})
+
