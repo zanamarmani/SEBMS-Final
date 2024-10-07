@@ -65,8 +65,8 @@ def bills_data(request):
     paid_bills = Bill.objects.filter(paid=True).count()  # Assuming 'status' field exists
 
     data = {
-        'total_bills': 100,
-        'paid_bills': 50,
+        'total_bills': total_bills,
+        'paid_bills': paid_bills,
         'labels': ['Total Bills', 'Paid Bills']
     }
 

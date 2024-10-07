@@ -22,4 +22,8 @@
   /* .action-buttons button {
     margin-right: 5px;
   } */
-  
+  .nav-link.active {
+    font-weight: bold;
+    color: red;
+}
+
