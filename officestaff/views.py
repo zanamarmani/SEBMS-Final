@@ -52,7 +52,8 @@ def list_consumers(request):
 
 def all_readings(request):
     readings = MeterReading.objects.all()
-    return render(request, 'all_readings.html', {'readings': readings})
+    title ="All Readings"
+    return render(request, 'all_readings.html', {'readings': readings,'title':title})
 def generate_bill(request, meter_number):
     """
     View to generate a bill for a specific consumer based on meter readings.
@@ -227,4 +228,5 @@ def Generate_bill(request):
     # return redirect('officestaff:all_readings')
 
     readings1 = MeterReading.objects.filter(processed=True)
-    return render(request, 'all_readings.html', {'meter_list': readings1})
+    title = "Generated Bills"
+    return render(request, 'all_readings.html', {'readings': readings1,'title':title})

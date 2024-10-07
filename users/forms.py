@@ -20,8 +20,21 @@ class UserForm(UserCreationForm):
 
 # User login form
 class UserLoginForm(AuthenticationForm):
-    username = forms.EmailField(label="Email")  # Override to use email instead of username
+    username = forms.EmailField(
+        label="Email"
+    )
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput
+    )
 
-    class Meta:
-        model = User
-        fields = ['email', 'password']
+    def __init__(self, *args, **kwargs):
+        super(UserLoginForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({
+            'placeholder': 'Enter your Email',
+            'class': 'form-control'
+        })
+        self.fields['password'].widget.attrs.update({
+            'placeholder': 'Enter your Password',
+            'class': 'form-control'
+        })

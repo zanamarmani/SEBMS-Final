@@ -98,7 +98,9 @@
     <form method="post">
         <h2>Login</h2>
         {% csrf_token %}
-        {{ form.as_p }} <!-- Existing form fields rendered by Django -->
+        <!-- Render only the input fields without labels -->
+        {{ form.username }}
+        {{ form.password }}
         <button type="submit">Login</button>
         <p><a href="{% url 'password_reset' %}">Forgot Password?</a></p>
         {% if error %}
