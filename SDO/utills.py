@@ -1,4 +1,5 @@
 # utils.py (or wherever your utility functions are)
+from django.shortcuts import render
 from .models import Tariff
 
 # def calculate_bill(consumed_units, tariff_type):
@@ -57,17 +58,8 @@ def calculate_bill(consumed_units, tariff):
     
     return total_bill
 
-from django.http import JsonResponse
-from bill.models import Bill  # Assuming you have a Bill model that tracks bills
-
-def bills_data(request):
-    total_bills = Bill.objects.all().count()
-    paid_bills = Bill.objects.filter(paid=True).count()  # Assuming 'status' field exists
-
-    data = {
-        'total_bills': 100,
-        'paid_bills': 50,
-        'labels': ['Total Bills', 'Paid Bills']
-    }
-
-    return JsonResponse(data)
+def line_chart(request):
+    labels = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']
+    data = [10,25,30,70,50,60]
+    data2 = [0,10,30,45,50,70]
+    return render(request, 'sdo/dashboard.html', {'labels': labels, 'data': data,'data2': data2})
