@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    {% block title %}     
-    <title>Office Staff - Smart Electricity Billing Management System</title>
+<head>  
+    {% block title %}    
+    <title>Office Staff - Smart Electricity Billing Management System </title>
     {% endblock %}
 
     <!-- Meta -->
@@ -35,7 +35,7 @@
                             <a id="sidepanel-toggler" class="sidepanel-toggler d-inline-block d-xl-none" href="#">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"
                                     role="img">
-                                    <title>Menu</title>
+                                    <title></title>
                                     <path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10"
                                         stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path>
                                 </svg>
@@ -176,10 +176,10 @@
                                     role="button" aria-expanded="false"><img class="rounded-circle" src="{% static 'images/logo.jpg' %}"
                                         alt="user profile"></a>
                                 <ul class="dropdown-menu" aria-labelledby="user-dropdown-toggle">
-                                    <li><a class="dropdown-item" href="account.html">Account</a></li>
-                                    <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+                                    <!-- <li><a class="dropdown-item" href="account.html">Account</a></li>
+                                    <li><a class="dropdown-item" href="settings.html">Settings</a></li> -->
                                     <li>
-                                        <hr class="dropdown-divider">
+                                        <!-- <hr class="dropdown-divider"> -->
                                         <form action="{%url 'logout'%}" method="post">
                                             {% csrf_token %}
                                     <li><button type='submit' class="">Logout</button></li>
@@ -197,7 +197,7 @@
             <div class="sidepanel-inner d-flex flex-column">
                 <a href="#" id="sidepanel-close" class="sidepanel-close d-xl-none">&times;</a>
                 <div class="app-branding">
-                    <a class="app-logo" href="{% url 'officestaff:home'%}"><img class="logo-icon me-2 rounded-circle" src="{% static 'images/LOGO.jpg' %}" alt="logo"></a>
+                    <a class="app-logo" href="{% url 'officestaff:home'%}"><img class="logo-icon me-2 rounded-circle" src="{% static 'images/main logo.jpg' %}" alt="logo"></a>
                             <span class="logo-text">Smart Billing</span>
 
                 </div><!--//app-branding-->
@@ -215,15 +215,10 @@
                         </li><!--//nav-item-->
                         <li class="nav-item">
                             <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-                            <a class="nav-link" href="{% url 'officestaff:all_readings' %}">
+                            <a class="nav-link prefetch" href="{% url 'officestaff:all_readings' %}">
                                 <span class="nav-icon">
-                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-folder"
-                                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M9.828 4a3 3 0 0 1-2.12-.879l-.83-.828A1 1 0 0 0 6.173 2H2.5a1 1 0 0 0-1 .981L1.546 4h-1L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3v1z" />
-                                        <path fill-rule="evenodd"
-                                            d="M13.81 4H2.19a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4zM2.19 3A2 2 0 0 0 .198 5.181l.637 7A2 2 0 0 0 2.826 14h10.348a2 2 0 0 0 1.991-1.819l.637-7A2 2 0 0 0 13.81 3H2.19z" />
-                                    </svg>
+                                    <svg width="1rem" height="1rem" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#000000" d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 288c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128z"/></svg>
+                                    
                                 </span>
                                 <span class="nav-link-text">All Readings</span>
                             </a><!--//nav-link-->
@@ -232,13 +227,7 @@
                             <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
                             <a class="nav-link" href="{% url 'officestaff:list_consumers' %}">
                                 <span class="nav-icon">
-                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-card-list" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-  <path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
-  <path fill-rule="evenodd" d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z"/>
-  <circle cx="3.5" cy="5.5" r=".5"/>
-  <circle cx="3.5" cy="8" r=".5"/>
-  <circle cx="3.5" cy="10.5" r=".5"/>
-</svg>
+                                    <svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/></svg>
                                 </span>
                                 <span class="nav-link-text">List Of Consumer</span>
                             </a><!--//nav-link-->
@@ -294,8 +283,8 @@
                             </a><!--//nav-link-->
                             <div id="submenu-2" class="collapse submenu submenu-2" data-bs-parent="#menu-accordion">
                                 <ul class="submenu-list list-unstyled">
-                                    <li class="submenu-item"><a class="submenu-link" href="login.html">Login</a></li>
-                                    <li class="submenu-item"><a class="submenu-link" href="signup.html">Signup</a></li>
+                                    <!-- <li class="submenu-item"><a class="submenu-link" href="login.html">Login</a></li>
+                                    <li class="submenu-item"><a class="submenu-link" href="signup.html">Signup</a></li> -->
                                     <li class="submenu-item"><a class="submenu-link" href="{% url 'officestaff:save_meter_data' %}">Save Meter Data</a></li>
                                     <li class="submenu-item"><a class="submenu-link" href="{% url 'officestaff:generate_bills' %}">Generate Bills</a></li>
                                 </ul>
@@ -307,11 +296,7 @@
                             <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
                             <a class="nav-link" href="{% url 'officestaff:registerconsumer' %}">
                                 <span class="nav-icon">
-                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bar-chart-line"
-                                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                            d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2zm1 12h2V2h-2v12zm-3 0V7H7v7h2zm-5 0v-3H2v3h2z" />
-                                    </svg>
+                                    <svg width="1em" height="1em"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#050505" d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3zM504 312l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
                                 </span>
                                 <span class="nav-link-text">Register Consumer</span>
                             </a><!--//nav-link-->
