@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .import views
-from .utills import line_chart
+from .utills import line_chart, bill_progress_view
 app_name = 'SDO'
 urlpatterns = [
     path('', views.dashboard, name='dashboard' ),
@@ -15,7 +15,7 @@ urlpatterns = [
     path('all_bills/', views.all_bills ,name='all_bills'),
     path('paid_bills/', views.paid_bills, name='paid_bills'),
     path('unpaid_bills/', views.unpaid_bills, name='unpaid_bills'),
-    path('line_graph/', line_chart, name='line_graph'),
-    #path('bills_per_year/', bills_per_year, name='bills_per_year'),
+    path('line_chart_data/', line_chart, name='line_chart_data'),
+    path('bill-progress/', bill_progress_view, name='bill_progress'),
 ]
 

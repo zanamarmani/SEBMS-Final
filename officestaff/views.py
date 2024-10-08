@@ -21,16 +21,30 @@ from django.core.mail import send_mail
 
 from .firebase_utils import fetch_meter_list 
 
+from .forms import OfficeStaffProfileForm
+from .models import Office_Staff_Profile
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def Home(request):
-    consumers = Consumer.objects.all()  # Fetch all consumers from the database
-    return render(request, 'officeStaffHome.html', {'consumers': consumers})
-    
+    consumers = Consumer.objects.all()# Fetch all consumers from the database
+    tariff = Tariff.objects.first()  
+    consumers1 = Consumer.objects.count()
+
+    # Count total office staff (assuming 'office_staff' is a role in the User model)
+    office_staffs = User.objects.filter(is_office_staff = True).count()
+    bills = Bill.objects.count()
+    # Count total meter readers (assuming 'meter_reader' is a role in the User model)
+    meter_readers = User.objects.filter(is_meter_reader=True).count()  
+    return render(request, 'officeStaffHome.html', {'consumers': consumers,'consumers1':consumers1,'total_office_staff':office_staffs,'bills':bills,'total_meter_reader':meter_readers})
+
+@login_required   
 def RegisterConsumer(request):
     tariffs=Tariff.tariff_type
     return render(request, 'RegisterConsumer.html',{'tariffs':tariffs})
 # officeStaff/views.py
 
-
+@login_required
 def register_consumer(request):
     if request.method == 'POST':
         form = ConsumerForm(request.POST)
@@ -44,16 +58,17 @@ def register_consumer(request):
         form = ConsumerForm()
 
     return render(request, 'RegisterConsumer.html', {'form': form})
-
+@login_required
 def list_consumers(request):
     consumers = Consumer.objects.all()
     return render(request, 'list_consumers.html', {'consumers': consumers})
 
-
+@login_required
 def all_readings(request):
     readings = MeterReading.objects.all()
     title ="All Readings"
     return render(request, 'all_readings.html', {'readings': readings,'title':title})
+@login_required
 def generate_bill(request, meter_number):
     """
     View to generate a bill for a specific consumer based on meter readings.
@@ -89,13 +104,13 @@ def generate_bill(request, meter_number):
 
     messages.success(request, f'Bill for consumer {consumer.name} has been generated successfully!')
     return redirect('officestaff:all_readings')
-
+@login_required
 def Get_All_Readings(request):
     # Fetch meter readings from Firebase
     meter_readings = fetch_meter_list()
     # Fetch all bills to display on the dashboard
     return render(request, 'all_readings.html', {'meter_readings': meter_readings})
-
+@login_required
 def save_meter_data_to_db(request):
     """
     Fetch the meter data from Firebase and save it to the local database.
@@ -156,22 +171,23 @@ def save_meter_data_to_db(request):
     return render(request, 'meter_data.html', {'meter_list': meter_list})
 
 # views.py
+@login_required
 def all_bills(request):
     # Fetch all bills from the database
     bills = Bill.objects.all()
     return render(request, 'all_bills.html', {'bills': bills})
-
+@login_required
 def paid_bills(request):
     # Fetch paid bills from the database
     bills = Bill.objects.filter(paid=True)
     return render(request, 'paid_bills.html', {'paid_bills': bills})
-
+@login_required
 def unpaid_bills(request):
     # Fetch unpaid bills from the database
     bills = Bill.objects.filter(paid=False)
     return render(request, 'unpaid_bills.html', {'unpaid_bills': bills})
 from django.views.generic import ListView
-
+@login_required
 class TariffListView(ListView):
     model = Tariff
     template_name = 'register_consumer.html'  # Path to your template
@@ -179,6 +195,8 @@ class TariffListView(ListView):
 
     def get_queryset(self):
         return Tariff.objects.all()
+    
+@login_required
 def Generate_bill(request):
     """
     View to generate a bill for a specific consumer based on meter readings.
@@ -230,3 +248,22 @@ def Generate_bill(request):
     readings1 = MeterReading.objects.filter(processed=True)
     title = "Generated Bills"
     return render(request, 'all_readings.html', {'readings': readings1,'title':title})
+
+@login_required
+def show_profile(request):
+    profile = get_object_or_404(Office_Staff_Profile, user = request.user)
+    return render(request, 'staff_profile.html', {'profile': profile})
+
+@login_required
+def update_office_staff_profile(request, pk):
+    profile = Office_Staff_Profile.objects.get(pk=pk)
+    
+    if request.method == 'POST':
+        form = OfficeStaffProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_success')  # Adjust this to your success view
+    else:
+        form = OfficeStaffProfileForm(instance=profile)
+    
+    return render(request, 'update_office_staff_profile.html', {'form': form})

@@ -18,6 +18,9 @@
     <script src="{% static 'plugins/chart.js/chart.min.js' %}"></script>
     <script src="{% static 'js/index-charts.js' %}"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
     <!-- Page Specific JS -->
     <script src="{% static 'js/app.js' %}"></script>
     <script>
@@ -55,3 +58,85 @@
         });
     </script>
     
+    <script>
+        window.chartColors = {
+            green: '#75c181',
+            gray: '#a9b5c9',
+        };
+
+        // Fetch line chart data from the line_chart_data view
+        function fetchLineChartData() {
+            return fetch('{% url "SDO:line_chart_data" %}')
+                .then(response => response.json())
+                .catch(error => console.error('Error fetching line chart data:', error));
+        }
+
+        // Create the line chart
+        function createLineChart(data) {
+            var ctx = document.getElementById('line-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Total Bills',
+                            backgroundColor: window.chartColors.green,
+                            borderColor: window.chartColors.green,
+                            data: data.total_bills,
+                            fill: false,
+                        },
+                        {
+                            label: 'Paid Bills',
+                            backgroundColor: window.chartColors.gray,
+                            borderColor: window.chartColors.gray,
+                            data: data.paid_bills,
+                            fill: false,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { display: true },
+                        y: { display: true }
+                    }
+                }
+            });
+        }
+
+        // Load the chart data after the page loads
+        window.addEventListener('load', function() {
+            fetchLineChartData().then(data => {
+                createLineChart(data);
+            });
+        });
+    </script>
+    
+<script>
+    window.addEventListener('load', function() {
+        fetchProgressData();
+    
+        function fetchProgressData() {
+            fetch('{% url "SDO:bill_progress" %}') // Your actual URL
+                .then(response => response.json())
+                .then(data => {
+                    // Update progress bars with the fetched data
+                    const total = data.total_bills;
+                    const paid = data.paid_bills;
+                    const unpaid = data.unpaid_bills;
+    
+                    const paidPercentage = (paid / total) * 100;
+                    const unpaidPercentage = (unpaid / total) * 100;
+    
+                    document.getElementById('paid-progress').style.width = paidPercentage + '%';
+                    document.getElementById('unpaid-progress').style.width = unpaidPercentage + '%';
+    
+                    document.getElementById('paid-text').innerText = `${paid} bills paid`;
+                    document.getElementById('unpaid-text').innerText = `${unpaid} bills unpaid`;
+                })
+                .catch(error => console.error('Error fetching progress data:', error));
+        }
+    });
+    
+</script>

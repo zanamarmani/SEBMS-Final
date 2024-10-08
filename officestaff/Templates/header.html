@@ -176,12 +176,12 @@
                                     role="button" aria-expanded="false"><img class="rounded-circle" src="{% static 'images/logo.jpg' %}"
                                         alt="user profile"></a>
                                 <ul class="dropdown-menu" aria-labelledby="user-dropdown-toggle">
-                                    <!-- <li><a class="dropdown-item" href="account.html">Account</a></li>
-                                    <li><a class="dropdown-item" href="settings.html">Settings</a></li> -->
+                                    <li><a class="dropdown-item" href="{% url 'officestaff:show_profile' %}">Profile</a></li>
+                                    {% comment %} <--<li><a class="dropdown-item" href="settings.html">Settings</a></li>--> {% endcomment %}
+                                    <form action="{%url 'logout'%}" method="post">
+                                        {% csrf_token %}
                                     <li>
                                         <!-- <hr class="dropdown-divider"> -->
-                                        <form action="{%url 'logout'%}" method="post">
-                                            {% csrf_token %}
                                     <li><button type='submit' class="">Logout</button></li>
                                         </form>
                                 </ul>

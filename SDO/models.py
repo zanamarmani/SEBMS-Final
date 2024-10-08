@@ -1,7 +1,7 @@
 # consumer/models.py
 
 from django.db import models
-
+from users.models import User
 class Tariff(models.Model):
     # Define the different types of tariffs
     TARIFF_CHOICES = [
@@ -23,3 +23,10 @@ class Tariff(models.Model):
 
     class Meta:
         verbose_name_plural = 'Tariffs'
+
+class sdo_profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True , related_name='sdo')
+    name = models.CharField(max_length=100)
+    office_location = models.CharField(max_length=100)
+    contact_number = models.CharField(max_length=15)
+    joining_date = models.DateField()

@@ -1,36 +1,5 @@
 # utils.py (or wherever your utility functions are)
 from django.shortcuts import render
-from .models import Tariff
-
-# def calculate_bill(consumed_units, tariff_type):
-#     try:
-#         tariff = Tariff.objects.get(tariff_type=tariff_type)
-#     except Tariff.DoesNotExist:
-#         raise ValueError("Tariff not found. Please set the tariff in the SDO dashboard.")
-
-#     # Initialize total bill
-#     total_bill = 0
-    
-#     # Pricing tiers
-#     price_tiers = [
-#         (100, tariff.price_100),   # First 100 units
-#         (100, tariff.price_200),   # Next 100 units (101-200)
-#         (100, tariff.price_300),   # Next 100 units (201-300)
-#         (float('inf'), tariff.price_above)  # Above 300 units
-#     ]
-
-#     # Calculate the bill based on consumed units and the price tiers
-#     for limit, price_per_unit in price_tiers:
-#         if consumed_units > limit:
-#             total_bill += limit * price_per_unit
-#             consumed_units -= limit
-#         else:
-#             total_bill += consumed_units * price_per_unit
-#             break
-    
-#     return total_bill
-
-# SDO/utils.py
 def calculate_bill(consumed_units, tariff):
     # Check if a valid tariff exists
     if not tariff:
@@ -74,8 +43,30 @@ def bills_data(request):
     return JsonResponse(data)
 
 def line_chart(request):
-    labels = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']
-    data = [10,25,30,70,50,60]
-    data2 = [0,10,30,45,50,70]
-    return render(request, 'sdo/dashboard.html', {'labels': labels, 'data': data,'data2': data2})
+    # Example: Get bills per month data
+    # bills_data = Bill.objects.values('month').annotate(
+    #     total_bills=Count('id'),
+    #     paid_bills=Count('id', filter=Q(paid=True))
+    # ).order_by('month')
 
+    labels = ['december','junuary','february','march','april','may','june','july','august','september','october','november']
+    total_bills = [4000,3500,405,1008,1500,2300,4500,6907,2778,2943,910,454]
+    paid_bills =  [3500,2000,400,1095,1400,2300,3050,6812,1278,2323,190,400]
+
+    return JsonResponse({
+        'labels': labels,
+        'total_bills': total_bills,
+        'paid_bills': paid_bills,
+    })
+
+def bill_progress_view(request):
+    # Assuming you have data for total bills, paid, and unpaid bills
+    total_bills = 100
+    paid_bills = 60
+    unpaid_bills = total_bills - paid_bills
+    
+    return JsonResponse({
+        'total_bills': total_bills,
+        'paid_bills': paid_bills,
+        'unpaid_bills': unpaid_bills,
+    })
