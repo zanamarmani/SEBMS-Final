@@ -153,12 +153,12 @@ def all_bills(request):
 def paid_bills(request):
     # Fetch paid bills from the database
     bills = Bill.objects.filter(paid=True)
-    return render(request, 'sdo/paid_bills.html', {'bills': bills})
+    return render(request, 'sdo/all_bills.html', {'bills': bills})
 
 def unpaid_bills(request):
     # Fetch unpaid bills from the database
     bills = Bill.objects.filter(paid=False)
-    return render(request, 'sdo/unpaid_bills.html', {'bills': bills})
+    return render(request, 'sdo/all_bills.html', {'bills': bills})
 
 
 def sdo_dashboard_show_details(request):

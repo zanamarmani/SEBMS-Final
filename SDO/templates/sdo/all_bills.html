@@ -77,13 +77,13 @@
 												<th>Consumer No</th>
 												<th>Amount</th>
 											</tr>
-											{% for bill in paid_bills %}
+											{% for bill in bills %}
 										</thead>
 										<tbody>
 											<tr>
 												<td>{{ bill.id }}</td>
 												<td>{{ bill.consumer.consumer_number }}</td>
-												<td>{{ bill.amount }}</td>
+												<td>{{ bill.amount_due }}</td>
 											</tr>
 											{% empty %}
 											<tr>
