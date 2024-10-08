@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 from consumer.models import Consumer
 # Create your models here.
@@ -20,6 +21,12 @@ class Bill(models.Model):
     amount_due = models.DecimalField(max_digits=10, decimal_places=2)
     paid = models.BooleanField(default=False)
     consumed_units = models.IntegerField(default=None)
+    due_date = models.DateField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.due_date:  # Only calculate if due_date isn't set
+            self.due_date = self.reading.reading_date + timedelta(days=15)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.consumer} - {self.month}'

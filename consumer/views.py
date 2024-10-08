@@ -111,3 +111,7 @@ def update_profile(request):
             'consumer_form': consumer_form,
             'consumer': consumer
             })
+
+def show_bills(request):
+    consumer = get_object_or_404(Consumer, user=request.user)
+    return render(request, 'show_bill.html',{'consumer': consumer})

@@ -15,6 +15,7 @@
     <p><strong>Area Number:</strong> {{ consumer.area_number }}</p>
     <p><strong>Tariff:</strong> {{ consumer.tariff }}</p>
     <p><strong>Approval Status:</strong> {{ consumer.approved }}</p>
+    <a href="{% url 'consumer:show_bills'%}">Show Bill</a>
 
     <!-- Bill History Section -->
     <h2>Your Bills</h2>
