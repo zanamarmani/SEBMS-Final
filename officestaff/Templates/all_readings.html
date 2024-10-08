@@ -63,7 +63,6 @@
 				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#orders-cancelled" role="tab" aria-controls="orders-cancelled" aria-selected="false">Cancelled</a>
 				</nav> -->
 
-<<<<<<< HEAD
       <div class="tab-content" id="orders-table-tab-content">
         <div
           class="tab-pane fade show active"
@@ -86,7 +85,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for meter in meter_list %}
+                    {% for meter in readings %}
                     <tr>
 						<td>{{meter.id}}</td>
                       <td>{{ meter.reading_date }}</td>
