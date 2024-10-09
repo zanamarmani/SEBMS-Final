@@ -38,3 +38,6 @@ def user_login(request):
     else:
         form = AuthenticationForm()
         return render(request, 'users/login.html', {'form': form})
+
+def homePage(request):
+    return render(request, 'users/index.html')

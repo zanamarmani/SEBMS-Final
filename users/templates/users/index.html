@@ -99,12 +99,12 @@ https://templatemo.com/tm-581-kind-heart-charity
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_3">Features</a>
+                            <a class="nav-link click-scroll" href="#section_3">Services</a>
                         </li>
 
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link click-scroll" href="#section_4">Volunteer</a>
-                        </li>
+                        </li> -->
 
                         <!-- <li class="nav-item dropdown">
                             <a class="nav-link click-scroll dropdown-toggle" href="#section_5" id="navbarLightDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">News</a>
@@ -117,11 +117,11 @@ https://templatemo.com/tm-581-kind-heart-charity
                         </li> -->
 
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_6">Contact</a>
+                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
                         </li>
 
                         <li class="nav-item ms-3">
-                            <a class="nav-link custom-btn custom-border-btn btn" href="donate.html">User Login</a>
+                            <a class="nav-link custom-btn custom-border-btn btn" href="{% url 'login' %}">User Login</a>
                         </li>
                     </ul>
                 </div>
@@ -138,7 +138,7 @@ https://templatemo.com/tm-581-kind-heart-charity
                             <div id="hero-slide" class="carousel carousel-fade slide" data-bs-ride="carousel">
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
-                                        <img src="{% static 'meter1.jpg' %}" class="carousel-image img-fluid" alt="...">
+                                        <img src="{% static 'first.jpg' %}" class="carousel-image img-fluid" alt="...">
                                         
                                         <div class="carousel-caption d-flex flex-column justify-content-end">
                                             <h1>SMART</h1>
@@ -148,7 +148,7 @@ https://templatemo.com/tm-581-kind-heart-charity
                                     </div>
 
                                     <div class="carousel-item">
-                                        <img src="{% static 'pic1.jpg' %}" class="carousel-image img-fluid" alt="...">
+                                        <img src="{% static 'pic2.jpg' %}" class="carousel-image img-fluid" alt="...">
                                         
                                         <div class="carousel-caption d-flex flex-column justify-content-end">
                                             <h1>Bill</h1>
@@ -195,40 +195,40 @@ https://templatemo.com/tm-581-kind-heart-charity
 
                         <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0">
                             <div class="featured-block d-flex justify-content-center align-items-center">
-                                <a href="donate.html" class="d-block">
-                                    <img src="{% static 'pic3.jpg' %}" class="featured-block-image img-fluid rounded" alt="">
+                                <a href="" class="d-block">
+                                    <img src="{% static 'scan.jpg' %}" class="featured-block-image img-fluid rounded" alt="">
 
-                                    <p class="featured-block-text">Meter <strong>Scanner</strong></p>
+                                    <p class="featured-block-text"> <strong>Automated Meter Reading</strong></p>
                                 </a>
                             </div>
                         </div>
 
                         <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0 mb-md-4">
                             <div class="featured-block d-flex justify-content-center align-items-center">
-                                <a href="donate.html" class="d-block">
-                                    <img src="{% static 'pic4.jpg' %}" class="featured-block-image img-fluid rounded" alt="">
+                                <a href="" class="d-block">
+                                    <img src="{% static 'customer1.jpg' %}" class="featured-block-image img-fluid rounded" alt="">
 
-                                    <p class="featured-block-text"><strong>Online Payment Gateway</strong> </p>
+                                    <p class="featured-block-text"><strong>Bill and Payment History</strong> </p>
                                 </a>
                             </div>
                         </div>
 
                         <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0 mb-md-4">
                             <div class="featured-block d-flex justify-content-center align-items-center">
-                                <a href="donate.html" class="d-block">
-                                    <img src="{% static 'meter1.jpg' %}" class="featured-block-image img-fluid rounded" alt="">
+                                <a href="" class="d-block">
+                                    <img src="{% static 'bill gen3.jpg' %}" class="featured-block-image img-fluid rounded" alt="">
 
-                                    <p class="featured-block-text"><strong> Automatic Bill Generation </strong></p>
+                                    <p class="featured-block-text"><strong> Accurate Bill Generation </strong></p>
                                 </a>
                             </div>
                         </div>
 
                         <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0">
                             <div class="featured-block d-flex justify-content-center align-items-center">
-                                <a href="donate.html" class="d-block">
-                                    <img src="{% static 'meter1.jpg' %}" class="featured-block-image img-fluid rounded" alt="">
+                                <a href="" class="d-block">
+                                    <img src="{% static 'trans3.jpg' %}" class="featured-block-image img-fluid rounded" alt="">
 
-                                    <p class="featured-block-text"><strong>Bill & Payment History</strong> </p>
+                                    <p class="featured-block-text"><strong>Online Payment Gateway</strong> </p>
                                 </a>
                             </div>
                         </div>
@@ -242,14 +242,14 @@ https://templatemo.com/tm-581-kind-heart-charity
                     <div class="row">
 
                         <div class="col-lg-6 col-12 mb-5 mb-lg-0">
-                            <img src="{% static 'meter1.jpg' %}" class="custom-text-box-image img-fluid" alt="">
+                            <img src="{% static 'about.jpg' %}" class="custom-text-box-image img-fluid" alt="">
                         </div>
 
                         <div class="col-lg-6 col-12">
                             <div class="custom-text-box">
                                 <h2 class="mb-2">About</h2>
 
-                                <h5 class="mb-3">Kind Heart Charity, Non-Profit Organization</h5>
+                                <h5 class="mb-3">The Smart Electricity Billing Management System</h5>
 
                                 <p class="mb-0">The Smart Electricity Billing Management System is a modern solution designed to automate and streamline the electricity billing process for both utility providers and consumers. Developed to address the inefficiencies of manual billing systems, our platform offers a comprehensive approach to managing electricity consumption, billing, and payments.</p>
                                 <p>Our system is built on cutting-edge technology, integrating advanced meter reading, accurate bill generation, and a user-friendly online payment gateway. Designed specifically for regions facing unique challenges, such as Skardu, our system takes into account local economic and infrastructural limitations, ensuring a reliable and scalable solution that benefits both providers and users</p>
@@ -305,7 +305,7 @@ https://templatemo.com/tm-581-kind-heart-charity
             </section>
 
 
-            <section class="about-section section-padding">
+            <!-- <section class="about-section section-padding">
                 <div class="container">
                     <div class="row">
 
@@ -341,9 +341,9 @@ https://templatemo.com/tm-581-kind-heart-charity
 
                     </div>
                 </div>
-            </section>
+            </section> -->
 
-            <section class="cta-section section-padding section-bg">
+            <!-- <section class="cta-section section-padding section-bg">
                 <div class="container">
                     <div class="row justify-content-center align-items-center">
 
@@ -359,7 +359,7 @@ https://templatemo.com/tm-581-kind-heart-charity
 
                     </div>
                 </div>
-            </section>
+            </section> -->
 
 
             <section class="section-padding" id="section_3">
@@ -372,7 +372,7 @@ https://templatemo.com/tm-581-kind-heart-charity
 
                         <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
                             <div class="custom-block-wrap">
-                                <img src="{% static 'meter1.jpg' %}" class="custom-block-image img-fluid" alt="">
+                                <img src="{% static 'pic4.jpg' %}" class="custom-block-image img-fluid" alt="">
 
                                 <div class="custom-block">
                                     <div class="custom-block-body">
@@ -408,11 +408,11 @@ https://templatemo.com/tm-581-kind-heart-charity
 
                         <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
                             <div class="custom-block-wrap">
-                                <img src="{% static 'meter1.jpg' %}" class="custom-block-image img-fluid" alt="">
+                                <img src="{% static 'bill gen1.jpg' %}" class="custom-block-image img-fluid" alt="">
 
                                 <div class="custom-block">
                                     <div class="custom-block-body">
-                                        <h5 class="mb-3">Accurate Billing</h5>
+                                        <h5 class="mb-3">Automated Billing</h5>
 
                                         <p>The system calculates bills based on real-time data from the meter readings, using the correct tariff rates. This results in highly accurate bills with itemized details, which can include a breakdown of charges, taxes, and previous balances. By eliminating manual calculations, the system reduces the likelihood of errors.</p>
 
@@ -440,7 +440,7 @@ https://templatemo.com/tm-581-kind-heart-charity
 
                         <div class="col-lg-4 col-md-6 col-12">
                             <div class="custom-block-wrap">
-                                <img src="{% static 'meter1.jpg' %}" class="custom-block-image img-fluid" alt="">
+                                <img src="{% static 'trans2.jpg' %}" class="custom-block-image img-fluid" alt="">
 
                                 <div class="custom-block">
                                     <div class="custom-block-body">
@@ -474,7 +474,7 @@ https://templatemo.com/tm-581-kind-heart-charity
                 </div>
             </section>
 
-            <section class="volunteer-section section-padding" id="section_4">
+            <!-- <section class="volunteer-section section-padding" id="section_4">
                 <div class="container">
                     <div class="row">
 
@@ -526,10 +526,10 @@ https://templatemo.com/tm-581-kind-heart-charity
 
                     </div>
                 </div>
-            </section>
+            </section> -->
 
             <section class="news-section section-padding" id="section_5">
-                <div class="container">
+                <!-- <div class="container">
                     <div class="row">
 
                         <div class="col-lg-12 col-12 mb-5">
@@ -772,65 +772,76 @@ https://templatemo.com/tm-581-kind-heart-charity
                     </div>
                 </div>
             </section>
-
+ -->
 
             <section class="testimonial-section section-padding section-bg">
                 <div class="container">
                     <div class="row">
 
                         <div class="col-lg-8 col-12 mx-auto">
-                            <h2 class="mb-lg-3">We are available Monday to Friday</h2>
+                            <h2 class="mb-lg-3">Contact</h2>
                             
                                 <div id="testimonial-carousel" class="carousel carousel-fade slide" data-bs-ride="carousel">
 
                                     <div class="carousel-inner">
                                         <div class="carousel-item active">
                                            <div class="carousel-caption">
-                                                <h4 class="carousel-title">Lorem Ipsum dolor sit amet, consectetur adipsicing kengan omeg kohm tokito charity theme</h4>
+                                                <h4 class="carousel-title">We are available</h4>
 
-                                                <small class="carousel-name"><span class="carousel-name-title">Maria</span>, Boss</small>
+                                                <small class="carousel-name"><span class="carousel-name-title">Mon</span>day</small>
                                            </div>
                                         </div>
 
                                         <div class="carousel-item">
                                             <div class="carousel-caption">
-                                                <h4 class="carousel-title">Sed leo nisl, posuere at molestie ac, suscipit auctor mauris quis metus tempor orci</h4>
+                                                <h4 class="carousel-title">We are available</h4>
 
-                                                <small class="carousel-name"><span class="carousel-name-title">Thomas</span>, Partner</small>
+                                                <small class="carousel-name"><span class="carousel-name-title">Tues</span>day</small>
                                             </div>
                                         </div>
 
                                         <div class="carousel-item">
                                             <div class="carousel-caption">
-                                                <h4 class="carousel-title">Lorem Ipsum dolor sit amet, consectetur adipsicing kengan omeg kohm tokito charity theme</h4>
+                                                <h4 class="carousel-title">We are available</h4>
 
-                                                <small class="carousel-name"><span class="carousel-name-title">Jane</span>, Advisor</small>
+                                                <small class="carousel-name"><span class="carousel-name-title">Wednes</span>day</small>
                                             </div>
                                         </div>
 
                                         <div class="carousel-item">
                                             <div class="carousel-caption">
-                                                <h4 class="carousel-title">Sed leo nisl, posuere at molestie ac, suscipit auctor mauris quis metus tempor orci</h4>
+                                                <h4 class="carousel-title">We are available</h4>
 
-                                                <small class="carousel-name"><span class="carousel-name-title">Bob</span>, Entreprenuer</small>
+                                                <small class="carousel-name"><span class="carousel-name-title">Thurs</span>day</small>
+                                           </div>
+                                        </div>
+
+                                        <div class="carousel-item">
+                                            <div class="carousel-caption">
+                                                <h4 class="carousel-title">We are available</h4>
+
+                                                <small class="carousel-name"><span class="carousel-name-title">Fri</span>day</small>
                                            </div>
                                         </div>
 
                                           <ol class="carousel-indicators">
                                                <li data-bs-target="#testimonial-carousel" data-bs-slide-to="0" class="active">
-                                                    <img src="images/avatar/portrait-beautiful-young-woman-standing-grey-wall.jpg" class="img-fluid rounded-circle avatar-image" alt="avatar">
+                                                    <img src="{% static 'last.jpg' %}" class="img-fluid rounded-circle avatar-image" alt="avatar">
                                                </li>
 
                                                <li data-bs-target="#testimonial-carousel" data-bs-slide-to="1" class="">
-                                                    <img src="images/avatar/portrait-young-redhead-bearded-male.jpg" class="img-fluid rounded-circle avatar-image" alt="avatar">
+                                                    <img src="{% static 'last.jpg' %}" class="img-fluid rounded-circle avatar-image" alt="avatar">
                                                </li>
 
                                                <li data-bs-target="#testimonial-carousel" data-bs-slide-to="2" class="">
-                                                    <img src="images/avatar/pretty-blonde-woman-wearing-white-t-shirt.jpg" class="img-fluid rounded-circle avatar-image" alt="avatar">
+                                                    <img src="{% static 'main logo.jpg' %}" class="img-fluid rounded-circle avatar-image" alt="avatar">
                                                </li>
 
                                                <li data-bs-target="#testimonial-carousel" data-bs-slide-to="3" class="">
-                                                    <img src="images/avatar/studio-portrait-emotional-happy-funny.jpg" class="img-fluid rounded-circle avatar-image" alt="avatar">
+                                                    <img src="{% static 'main logo.jpg' %}" class="img-fluid rounded-circle avatar-image" alt="avatar">
+                                               </li>
+                                               <li data-bs-target="#testimonial-carousel" data-bs-slide-to="4" class="">
+                                                    <img src="{% static 'main logo.jpg' %}" class="img-fluid rounded-circle avatar-image" alt="avatar">
                                                </li>
                                           </ol>
 
@@ -843,7 +854,7 @@ https://templatemo.com/tm-581-kind-heart-charity
             </section>
 
 
-            <section class="contact-section section-padding" id="section_6">
+            <!-- <section class="contact-section section-padding" id="section_6">
                 <div class="container">
                     <div class="row">
 
@@ -916,7 +927,7 @@ https://templatemo.com/tm-581-kind-heart-charity
 
                     </div>
                 </div>
-            </section>
+            </section> -->
         </main>
 
         <footer class="site-footer">
@@ -930,14 +941,14 @@ https://templatemo.com/tm-581-kind-heart-charity
                         <h5 class="site-footer-title mb-3">Quick Links</h5>
 
                         <ul class="footer-menu">
+                            <li class="footer-menu-item"><a href="#" class="footer-menu-link">Home</a></li>
+
                             <li class="footer-menu-item"><a href="#" class="footer-menu-link">About</a></li>
 
-                            <li class="footer-menu-item"><a href="#" class="footer-menu-link">Features
-
-                            <li class="footer-menu-item"><a href="#" class="footer-menu-link">Contact</a></li>
+                            <li class="footer-menu-item"><a href="#" class="footer-menu-link">Services</a></li>
                             
 
-                            <li class="footer-menu-item"><a href="#" class="footer-menu-link">Become a volunteer</a></li>
+                            <li class="footer-menu-item"><a href="#" class="footer-menu-link">Contact</a></li>
 
                             <li class="footer-menu-item"><a href="#" class="footer-menu-link">Partner with us</a></li>
                         </ul>
@@ -967,7 +978,7 @@ https://templatemo.com/tm-581-kind-heart-charity
                             University of Baltistan Skardu
                         </p>
 
-                        <a href="#" class="custom-btn btn mt-3">Get Direction</a>
+                        <!-- <a href="#" class="custom-btn btn mt-3">Get Direction</a> -->
                     </div>
                 </div>
             </div>
@@ -977,11 +988,12 @@ https://templatemo.com/tm-581-kind-heart-charity
                     <div class="row">
 
                         <div class="col-lg-6 col-md-7 col-12">
-                            <p class="copyright-text mb-0">Copyright © 2024 <a href="#">SEBMS<a> 
-                        	Design: <a href="https://templatemo.com" target="_blank">Zohaib</a></p>
+                            <p class="copyright-text mb-0">Copyright © 2024 <a href="#">Smart Electricity Billing Management System<a> 
+                        	
+                            </p>
                         </div>
                         
-                        <div class="col-lg-6 col-md-5 col-12 d-flex justify-content-center align-items-center mx-auto">
+                        <!-- <div class="col-lg-6 col-md-5 col-12 d-flex justify-content-center align-items-center mx-auto">
                             <ul class="social-icon">
                                 <li class="social-icon-item">
                                     <a href="#" class="social-icon-link bi-twitter"></a>
@@ -1003,7 +1015,7 @@ https://templatemo.com/tm-581-kind-heart-charity
                                     <a href="https://youtube.com/templatemo" class="social-icon-link bi-youtube"></a>
                                 </li>
                             </ul>
-                        </div>
+                        </div> -->
                         
                     </div>
                 </div>
