@@ -1,5 +1,3 @@
-from django.db import IntegrityError
-from django.http import HttpResponse
 from django.shortcuts import redirect, render,get_object_or_404
 
 # Create your views here.
@@ -22,6 +20,7 @@ from .forms import SDOProfileForm,SDOProfileCreateForm
 
 from django.contrib.auth import login
 from .forms import CustomUserCreationForm
+
 
 @login_required
 def dashboard(request):
@@ -139,10 +138,7 @@ def sdo_dashboard_show_details(request):
     return render(request, 'sdo/show_all_users.html',{'consumers': total_consumers,'office_staff': office_staff,'meter_readers': meter_readers})
 
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Tariff
-from .forms import TariffForm  # Assuming you create a TariffForm
+
 
 def create_or_get_tariff(request):
     if request.method == 'POST':

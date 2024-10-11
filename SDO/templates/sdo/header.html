@@ -90,7 +90,7 @@
                                             src="{% static 'images/logo.jpg' %}" alt="user profile"></a>
                                     <ul class="dropdown-menu" aria-labelledby="user-dropdown-toggle">
                                         
-                                        <li>{% if profile %}{{profile.first_name}}{% else %}<a class="dropdown-item" href="{%url 'SDO:create_sdo_profile'%}">Create your Profile</a>{% endif %}</li>
+                                        <li class="dropdown-item">{% if profile %}{{profile.first_name}}{% else %}<a class="dropdown-item" href="{%url 'SDO:create_sdo_profile'%}">Create your Profile</a>{% endif %}</li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
