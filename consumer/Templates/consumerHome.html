@@ -32,7 +32,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for bill in bills %}
+            {% if bills %}
             <tr>
                 <td>{{ bill.id }}</td>
                 <td>{{ bill.consumer.consumer_number }}</td>
@@ -50,13 +50,13 @@
                 
                 <td>
                     <!-- Payment Form for each bill -->
-                    <form action="{% url 'consumer:payment_gateway' bill.id %}" method="POST">
+                    {% comment %} <form action="{% url 'consumer:payment_gateway' bill.id %}" method="POST">
                         {% csrf_token %}
                         <button type="submit">Pay Now</button>
-                    </form>
+                    </form> {% endcomment %}
                 </td>
             </tr>
-            {% endfor %}
+            {% endif %}
         </tbody>
     </table>
 

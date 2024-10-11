@@ -83,12 +83,12 @@
 											{% for bill in bills %}
 										</thead>
 										<tbody>
-											<tr>
+											<tr {% if bill.bill_id in newly_generated_bill_ids %} class="highlight" {% endif %}>
 												<td>{{ bill.id }}</td>
-												<td>{{ bill.consumer.consumer_number }}</td>
-												<td>{{ bill.amount_due }}</td>
-												<td>{{ bill.month }}</td>
-												<td>{{ bill.consumed_units }}</td>
+												<td>{{ bill.meter.consumer.consumer_number }}</td>
+												<td>{{ bill.payableamount }}</td>
+												<td>{{ bill.billmonth }}</td>
+												<td>{{ bill.unitsconsumed }}</td>
 												<td>
 												{% if bill.paid %}
 													Paid 

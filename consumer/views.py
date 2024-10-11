@@ -2,31 +2,31 @@ from datetime import timedelta, timezone
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from consumer.forms import ConsumerProfileForm
+from meterreader.models import Meter
+from payment.models import Payment
 from users.forms import UserForm
 from .models import Consumer
-from bill.models import Bill, Payment
+from bill.models import Bill
 
 @login_required
 def consumer_home(request):
     consumer = get_object_or_404(Consumer, user=request.user)  # Get the consumer linked to the logged-in user
     status = consumer.approved
     # Fetch the consumer's bills and payment history
-    bills = Bill.objects.filter(consumer=consumer)
-    for bill in bills:
-        bill.due_date = bill.month + timedelta(days=10)
+    meters = Meter.objects.filter(consumer=consumer)
+    for meter in meters:
+        bill = Bill.objects.filter(meter=meter)
+        bill.due_date = bill.month + timedelta(days=15)
     if status:
-        bills = Bill.objects.filter(consumer=consumer).order_by('-month')
-        payments = Payment.objects.filter(consumer=consumer).order_by('-payment_date')
-    
+        bills = Bill.objects.filter(meter=meter).order_by('-month')
         context = {
         'consumer': consumer,  # Pass the consumer's profile information
         'bills': bills,  # Pass the consumer's bills
-        'payments': payments,  # Pass the consumer's payment history
+          # Pass the consumer's payment history
         }
         return render(request, 'consumerHome.html', context)
     else:
-        return render(request, 'consumerHome.html', {'consumer': consumer, 'status': status , 'bills':bills})  # Render the consumer home page with the consumer's profile information and status
+        return render(request, 'consumerHome.html', {'consumer': consumer, 'status': status })  # Render the consumer home page with the consumer's profile information and status
 
 def payment_gateway(request, bill_id):
     bill = get_object_or_404(Bill, id=bill_id)

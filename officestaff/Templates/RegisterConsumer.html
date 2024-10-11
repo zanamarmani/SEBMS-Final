@@ -48,6 +48,7 @@
 
       input[type="text"],
       input[type="password"],
+      input[type="email"],
       select {
         width: 100%;
         padding: 12px;
@@ -106,27 +107,49 @@
     <div class="form-container">
       <h1>Register Consumer</h1>
       <h4>Please fill the following fileds</h4>
+      {% if form.errors %}
+<div class="alert alert-danger">
+    <ul>
+        {% for field in form %}
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
       <p>{{ message }}</p>
       <form method="post" action="{% url 'officestaff:registerconsumer' %}">
         {% csrf_token %}
     
         <label for="name">Consumer Name:</label>
-        {{ form.name }}
+        {{ form.consumer_name }}
     
         <label for="consumer_number">Consumer Number:</label>
         {{ form.consumer_number }}
+        <label for="consumer_number">Consumer Email:</label>
+        {{ form.email }}
+
     
-        <label for="password">Password:</label>
-        {{ form.password }}
+        <label for="id_password">Consumer Password:</label>
+        <div class="input-group">
+          {{ form.password }} <!-- This is the default rendering of the password field -->
+          <span class="input-group-text" id="togglePassword">
+              <i class="fa fa-eye" aria-hidden="true"></i>
+          </span>
+      </div>
     
-        <label for="meter_number">Meter Number:</label>
-        {{ form.meter_number }}
+        <label for="area_number">Consumer Address:</label>
+        {{ form.consumer_address }}
     
-        <label for="area_number">Area Number:</label>
-        {{ form.area_number }}
+        <label for="area_number">Consumer Division:</label>
+        {{ form.consumer_division }}
     
-        <label for="tariff">Tariff Type:</label>
-        {{ form.tariff }}
+        <label for="tariff">Consumer Tariff Type:</label>
+        {{ form.consumer_tariff }}
     
         <button type="submit">Register</button>
     

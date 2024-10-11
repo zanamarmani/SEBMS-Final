@@ -72,8 +72,7 @@
 										<thead>
 											<tr>
 												<th>Name</th>
-												<th>Consumer Number</th>
-												<th>Meter Number</th>
+												<th>Consumer Number</th> 											
 												<th>Area Number</th>
 												<th>Tariff</th>
 											</tr>
@@ -81,11 +80,16 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td>{{ consumer.name }}</td>
-												<td>{{ consumer.consumer_number }}</td>
-												<td>{{ consumer.meter_number }}</td>
-												<td>{{ consumer.area_number }}</td>
-												<td>{{ consumer.tariff }}</td>
+												<td>{{ consumer.consumer_name }}</td>
+												<td>{{ consumer.consumer_number }}</td>												
+												<td>{{ consumer.consumer_division }}</td>
+												<td>{{ consumer.consumer_tariff }}</td>
+												<td>
+													<!-- Show Details Button -->
+													<a href="{% url 'SDO:consumer_profile' consumer.id %}">
+														<button type="button">Show Details</button>
+													</a>
+												</td>
 											</tr>
 											{% endfor %}
 											<!-- <tr>

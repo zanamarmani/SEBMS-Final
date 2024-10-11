@@ -76,14 +76,18 @@
 												<th>Bill ID</th>
 												<th>Consumer No</th>
 												<th>Amount</th>
+												<th>Bill Month</th>
+												<th>Bill Status</th>
 											</tr>
 											{% for bill in bills %}
 										</thead>
 										<tbody>
 											<tr>
 												<td>{{ bill.id }}</td>
-												<td>{{ bill.consumer.consumer_number }}</td>
-												<td>{{ bill.amount_due }}</td>
+												<td>{{ bill.meter.consumer.consumer_number }}</td>
+												<td>{{ bill.payableamount }}</td>
+												<td>{{bill.billmonth}}</td>
+												<td>{%if bill.paid%} Paid {% else %}Unpaid {% endif %}</td>
 											</tr>
 											{% empty %}
 											<tr>

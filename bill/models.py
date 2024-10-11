@@ -1,41 +1,18 @@
-from datetime import timedelta
 from django.db import models
-from consumer.models import Consumer
-# Create your models here.
-# bill/models.py
+from meterreader.models import Meter
 
-class Bill_Details(models.Model):
-    consumer_no = models.CharField(max_length=100,default=None)
-    meter_no = models.CharField(max_length=100,default=None)
-    new_reading = models.IntegerField
-    last_reading = models.IntegerField
-    Date_of_Reading = models.DateField
-    bill_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    due_date = models.DateField
 
-    def __str__(self):
-        return f'{self.consumer_no} - {self.meter_no}'
 class Bill(models.Model):
-    consumer = models.ForeignKey(Consumer, on_delete=models.CASCADE,related_name='bills')
-    month = models.DateField()
-    amount_due = models.DecimalField(max_digits=10, decimal_places=2)
-    paid = models.BooleanField(default=False)
-    consumed_units = models.IntegerField(default=None)
-    due_date = models.DateField(null=True, blank=True)
-
-    def save(self, *args, **kwargs):
-        if not self.due_date:  # Only calculate if due_date isn't set
-            self.due_date = self.reading.reading_date + timedelta(days=15)
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f'{self.consumer} - {self.month}'
-
-class Payment(models.Model):
-    consumer = models.ForeignKey(Consumer, on_delete=models.CASCADE)
-    bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
-    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_date = models.DateTimeField(auto_now_add=True)
+    billmonth = models.DateField(null=True)  # Month of the bill
+    duedate = models.DateField(null=True,blank=True)  # Due date for payment
+    detectionunit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Detected unit (if any)
+    averageunit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Average unit
+    units = models.DecimalField(max_digits=10, decimal_places=2,null=True)  # Units
+    unitsconsumed = models.DecimalField(max_digits=10, decimal_places=2,null=True)  # Units consumed
+    payableamount = models.DecimalField(max_digits=10, decimal_places=2,null=True)  # Amount payable
+    payable_after_due_date = models.DecimalField(max_digits=10, decimal_places=2,null=True)  # Amount after due date
+    meter = models.ForeignKey(Meter, on_delete=models.CASCADE,null=True,blank=True)  # Many-to-one to Meter
+    paid = models.BooleanField(default=False, null=True)
 
     def __str__(self):
-        return f'{self.consumer} - {self.amount_paid}'
+        return f'Bill for {self.billmonth} (Due: {self.duedate})'

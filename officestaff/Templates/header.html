@@ -21,6 +21,10 @@
 
     <!-- App CSS -->
     <link id="theme-style" rel="stylesheet" href="{% static 'css/portal.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 
 </head>
 
@@ -175,16 +179,17 @@
                                 <a class="dropdown-toggle" id="user-dropdown-toggle" data-bs-toggle="dropdown" href="#"
                                     role="button" aria-expanded="false"><img class="rounded-circle" src="{% static 'images/logo.jpg' %}"
                                         alt="user profile"></a>
-                                <ul class="dropdown-menu" aria-labelledby="user-dropdown-toggle">
-                                    <li><a class="dropdown-item" href="{% url 'officestaff:show_profile' %}">Profile</a></li>
-                                    {% comment %} <--<li><a class="dropdown-item" href="settings.html">Settings</a></li>--> {% endcomment %}
-                                    <form action="{%url 'logout'%}" method="post">
-                                        {% csrf_token %}
-                                    <li>
-                                        <!-- <hr class="dropdown-divider"> -->
-                                    <li><button type='submit' class="">Logout</button></li>
-                                        </form>
-                                </ul>
+                                        <ul class="dropdown-menu" aria-labelledby="user-dropdown-toggle">
+                                            <li><a class="dropdown-item" href="">Account</a></li>
+                                            <li><a class="dropdown-item" href="">Settings</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <form method="POST" action="{% url 'logout' %}">
+                                                {% csrf_token %}
+                                                <button class="dropdown-item" type="submit">Log Out</button>
+                                            </form>
+                                        </ul>
                             </div><!--//app-user-dropdown-->
                         </div>
                         <!--//app-utilities-->
@@ -285,7 +290,8 @@
                                 <ul class="submenu-list list-unstyled">
                                     <!-- <li class="submenu-item"><a class="submenu-link" href="login.html">Login</a></li>
                                     <li class="submenu-item"><a class="submenu-link" href="signup.html">Signup</a></li> -->
-                                    <li class="submenu-item"><a class="submenu-link {% if request.resolver_match.url_name == 'save_meter_data' %}active{% endif %}" href="{% url 'officestaff:save_meter_data' %}">Save Meter Data</a></li>
+                                    <li class="submenu-item"><a class="submenu-link {% if request.resolver_match.url_name == 'assign_meter' %}active{% endif %}" href="{% url 'officestaff:assign_meter' %}">Assign Meter For Consumers</a></li>
+                                    <li class="submenu-item"><a class="submenu-link {% if request.resolver_match.url_name == 'save_meter_data' %}active{% endif %}" href="{% url 'officestaff:save_meter_data' %}">Fetch Meter Readings</a></li>
                                     <li class="submenu-item"><a class="submenu-link {% if request.resolver_match.url_name == 'generate_bills' %}active{% endif %}" href="{% url 'officestaff:generate_bills' %}">Generate Bills</a></li>
                                 </ul>
                             </div>

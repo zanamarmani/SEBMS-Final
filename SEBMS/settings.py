@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'officestaff',
     'meterreader',
     'bill',
+    'payment',
     
 ]
 
@@ -73,6 +74,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'SDO.context_processors.tariff_processor',
                 'officestaff.context_processors.bill_processor',
+                'SDO.context_processors.user_profile',
             ],
         },
     },
@@ -131,6 +133,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
+DEFAULT_FROM_EMAIL = 'noreply@sebms.com'
+EMAIL_SUBJECT_PREFIX = '[SEBMS]'
+PROJECT_NAME = 'SEBMS'
+PASSWORD_RESET_DOMAIN = 'www.sebms.com'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'

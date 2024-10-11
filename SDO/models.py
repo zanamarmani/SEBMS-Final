@@ -25,8 +25,12 @@ class Tariff(models.Model):
         verbose_name_plural = 'Tariffs'
 
 class sdo_profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True , related_name='sdo')
-    name = models.CharField(max_length=100)
-    office_location = models.CharField(max_length=100)
-    contact_number = models.CharField(max_length=15)
-    joining_date = models.DateField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)  # One-to-one with User
+    first_name = models.CharField(max_length=100,null=True)  # First name
+    last_name = models.CharField(max_length=100,null=True,blank=True)  # Last name
+    office_location = models.CharField(max_length=255,null=True)  # Office location
+    joining_date = models.DateField(null=True)  # Joining date
+
+    def __str__(self):
+        return f'SDO: {self.first_name} {self.last_name}'
+
