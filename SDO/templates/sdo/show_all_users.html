@@ -67,16 +67,16 @@
                   <table class="table app-table-hover mb-0 text-left">
                     <thead>
                       <tr>
-                        <th>Username</th>
+      
                         <th>Email</th>
                         <th>Role</th>
-                        <th>Area</th>
+                        <th>Action</th>
                       </tr>
                       {% for user in users %}
                     </thead>
                     <tbody>
                       <tr>
-                        <td>{{ user.email }}</td>
+                       
                         <td>{{ user.email }}</td>
                         <td>
                           {% if user.is_office_staff %}
@@ -89,7 +89,14 @@
                           SDO
                           {% endif %}
                         </td>
-                        <td>{{ user.area }}</td>
+                
+                        {% if user.pk %} 
+                        <td>
+                          <a class="btn-sm app-btn-secondary " href="{% url 'SDO:user_update' user.pk %}">Update User</a>
+                          <a class="btn-sm app-btn-secondary" href="{% url 'SDO:update_password' user.pk %}">Change User Password</a>
+                          <a class="btn-sm app-btn-secondary" href="{% url 'SDO:user_delete' user.pk %}">Delete User</a>
+                        </td>
+                        {% endif %} 
                       </tr>
                       {% endfor %}
                       <!-- <tr>

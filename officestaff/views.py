@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import render
 
 # Create your views here.
@@ -5,26 +6,28 @@ from django.shortcuts import render
 
 from django.http import HttpResponse
 from SDO.models import Tariff
-from consumer.forms import ConsumerForm
+
+from consumer.forms import ConsumerRegistrationForm
 from consumer.models import Consumer
-from meterreader.models import MeterReading
+from meterreader.forms import MeterAssignmentForm
+from meterreader.models import Meter
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.contrib import messages
+from officestaff.models import OfficeStaff
 from users.models import User
 
-from bill.models import Bill, Bill_Details
+from bill.models import Bill
 from SDO.utills import calculate_bill
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from django.core.mail import send_mail
 
 
 from .firebase_utils import fetch_meter_list 
 
-from .forms import OfficeStaffProfileForm
-from .models import Office_Staff_Profile
 from django.contrib.auth.decorators import login_required
 
+from bill.views import calculate_amount_due
 
 def Home(request):
     consumers = Consumer.objects.all()# Fetch all consumers from the database
@@ -47,17 +50,17 @@ def RegisterConsumer(request):
 
 def register_consumer(request):
     if request.method == 'POST':
-        form = ConsumerForm(request.POST)
+        form = ConsumerRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Consumer registered successfully.")
-            return redirect('officestaff:registerconsumer')  # Redirect to the same page after successful registration
+            return redirect('success_page')  # Redirect to a success page or desired location
         else:
-            messages.error(request, "Error in registration. Please check the form.")
+            messages.error(request, 'Failed to Register try different email or consumer number')
     else:
-        form = ConsumerForm()
+        form = ConsumerRegistrationForm()
 
     return render(request, 'RegisterConsumer.html', {'form': form})
+
 
 def list_consumers(request):
     consumers = Consumer.objects.all()
@@ -65,7 +68,7 @@ def list_consumers(request):
 
 
 def all_readings(request):
-    readings = MeterReading.objects.all()
+    readings = Meter.objects.all()
     title ="All Readings"
     return render(request, 'all_readings.html', {'readings': readings,'title':title})
 
@@ -74,7 +77,7 @@ def generate_bill(request, meter_number):
     View to generate a bill for a specific consumer based on meter readings.
     """
     consumer = get_object_or_404(Consumer, meter_number=meter_number)
-    reading = MeterReading.objects.filter(meter_number=meter_number).last()  # Get the latest reading
+    reading = Meter.objects.filter(meter_number=meter_number).last()  # Get the latest reading
 
     if not reading:
         messages.error(request, "No meter reading found for this consumer.")
@@ -136,10 +139,10 @@ def save_meter_data_to_db(request):
 
         reading = int(round(reading))  # Round and convert to integer
 
-        if MeterReading.objects.filter(meter_number=serial_no, reading_date=date_obj).exists():
+        if Meter.objects.filter(meter_number=serial_no, reading_date=date_obj).exists():
             continue 
         # Retrieve the last reading for this meter using filter() and order by the most recent reading
-        last_reading_record = MeterReading.objects.filter(meter_number=serial_no).order_by('-reading_date').first()
+        last_reading_record = Meter.objects.filter(meter_number=serial_no).order_by('-reading_date').first()
 
         if last_reading_record:
             last_reading = last_reading_record.new_reading  # Use the most recent `new_reading`
@@ -147,7 +150,7 @@ def save_meter_data_to_db(request):
             last_reading = 500  # Default last reading if no previous record exists
 
         # Use get_or_create to avoid IntegrityError for unique meter_number
-        meter_reading, created = MeterReading.objects.get_or_create(
+        meter_reading, created = Meter.objects.get_or_create(
             meter_number=serial_no,
             defaults={
                 'last_reading': last_reading,
@@ -165,7 +168,7 @@ def save_meter_data_to_db(request):
             meter_reading.save()
 
     # After saving, retrieve the saved data to display it
-    meter_list = MeterReading.objects.all()
+    meter_list = Meter.objects.all()
 
     # Render the template with the saved meter data
     return render(request, 'meter_data.html', {'meter_list': meter_list})
@@ -198,71 +201,126 @@ class TariffListView(ListView):
     
 
 def Generate_bill(request):
-    """
-    View to generate a bill for a specific consumer based on meter readings.
-    """
-    readings = MeterReading.objects.filter(processed=False)  # Get all unprocessed readings
-    for reading in readings:
-        # Step 2: Find the associated consumer using the meter number
-        try:
-            consumer = Consumer.objects.get(meter_number=reading.meter_number)
-        except Consumer.DoesNotExist:
-            continue  # Skip if no matching consumer found
+    meters = Meter.objects.filter(processed=False)
+    bill_details = []
+    newly_generated_bill_ids = []  # List to track newly generated bills
 
-        # Step 3: Calculate the consumed units
-        consumed_units = reading.new_reading - reading.last_reading
+    for meter in meters:
+        units_consumed = meter.new_reading - meter.last_reading
 
-        # Step 4: Get the tariff details associated with the consumer
-        tariff = consumer.tariff
+        if meter.consumer and meter.consumer.approved:
+            tariff = meter.consumer.consumer_tariff
+        else:
+            continue  # Skip if the consumer is not approved or doesn't exist
 
-        # Step 5: Calculate the bill amount
-        bill_amount = calculate_bill(consumed_units, tariff)
+        # Calculate payable amounts
+        payable_amount = calculate_amount_due(units_consumed, tariff)
+        payable_after_due_date = payable_amount * Decimal('1.1')  # 10% late fee
 
-        # Step 6: Create a new bill entry for the current month
-        try:
-            bill = Bill.objects.create(
-                consumer=consumer,
-                month=date.today(),  # Current month
-                amount_due=bill_amount,
-                consumed_units=consumed_units,
-                paid=False
-            )
-            bill.save()  # Save the changes to the database
-            if bill:
-                send_mail(
-                    'Bill Generation',
-                    f'Your bill for {consumer.name} is due on {bill.month}. Amount due: {bill.amount_due}',
-                    'zanam786armani@gmail.com',
-                    [consumer.email],
-                    fail_silently=False,
-                )
-        except Exception as e:
-            print(f"Error occurred while generating bill for consumer {consumer.name}: {str(e)}")
-            continue  # Skip to the next consumer if there's an error
+        # Create a new Bill object
+        bill = Bill.objects.create(
+            billmonth=timezone.now().date(),  # Current date as bill month
+            duedate=timezone.now().date() + timedelta(days=15),  # Example due date 15 days from today
+            detectionunit=Decimal('0.00'),  # Assuming no detection unit
+            averageunit=Decimal('0.00'),  # Assuming no average unit
+            units=units_consumed,  # Total units
+            unitsconsumed=units_consumed,  # Consumed units
+            payableamount=payable_amount,  # Amount payable before due date
+            payable_after_due_date=payable_after_due_date,  # Amount payable after due date
+            meter=meter,  # Link the meter to the bill
+            paid=False  # Initially mark the bill as unpaid
+        )
 
-    # Move the success message and redirect outside the loop
-    # messages.success(request, 'Bills have been generated successfully!')
-    # return redirect('officestaff:all_readings')
+        # Add the newly created bill's ID to the tracking list
+        newly_generated_bill_ids.append(bill.id)
 
-    readings1 = MeterReading.objects.filter(processed=True)
-    title = "Generated Bills"
-    return render(request, 'all_readings.html', {'readings': readings1,'title':title})
+        # Mark meter as processed
+        meter.processed = True
+        meter.save()
+
+        # Append bill details to bill_details list (optional, for rendering purposes)
+        bill_details.append({
+            'meter_number': meter.meter_number,
+            'consumer_name': meter.consumer.consumer_name,
+            'units_consumed': units_consumed,
+            'payable_amount': payable_amount,
+            'payable_after_due_date': payable_after_due_date,
+            'bill_id': bill.id  # Track the bill ID
+        })
+    bill = Bill.objects.all()
+    # Pass the generated bill IDs to the template for highlighting
+    return render(request, 'all_bills.html', {
+        'bills': bill,
+        'newly_generated_bill_ids': newly_generated_bill_ids
+    })
 
 
 def show_profile(request):
-    profile = get_object_or_404(Office_Staff_Profile, user = request.user)
+    profile = get_object_or_404(OfficeStaff, user = request.user)
     return render(request, 'staff_profile.html', {'profile': profile})
 
 
 def update_office_staff_profile(request, pk):
-    profile = Office_Staff_Profile.objects.get(pk=pk)
-    
-    if request.method == 'POST':
-        form = OfficeStaffProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profile_success')  # Adjust this to your success view
+
+    return render(request, 'update_office_staff_profile.html')
+
+
+def delete_unapproved_consumer(request, pk):
+    # Fetch the consumer by their primary key (id) and ensure they are unapproved
+    try:
+        # Fetch the consumer by primary key (id) and ensure they are unapproved
+        consumer = get_object_or_404(Consumer, pk=pk, approved=False)
+        
+        # Log to check if the consumer is found
+        print(f"Found unapproved consumer: {consumer.consumer_name}")
+
+        # Delete the consumer
+        consumer.delete()
+
+        # Add a success message
+        messages.success(request, f'Consumer {consumer.consumer_name} has been deleted.')
+
+    except Exception as e:
+        # In case of an error, log the error message
+        print(f"Error: {e}")
+        messages.error(request, 'No unapproved consumer matches the given query.')
+
+    # Redirect to a list or dashboard after deletion
+    return redirect('officestaff:list_consumers') 
+
+def assign_meter_view(request):
+    consumer = None
+    error = None
+
+    if request.method == 'GET' and 'consumer_number' in request.GET:
+        consumer_number = request.GET.get('consumer_number')
+
+        try:
+            consumer = Consumer.objects.get(consumer_number=consumer_number, approved=True)
+        except Consumer.DoesNotExist:
+            error = "Consumer not found or not approved."
+            consumer = None
+
+        form = MeterAssignmentForm(consumer=consumer)
+
+    elif request.method == 'POST':
+        consumer_number = request.POST.get('consumer_number')
+
+        try:
+            consumer = Consumer.objects.get(consumer_number=consumer_number, approved=True)
+        except Consumer.DoesNotExist:
+            error = "Consumer not found or not approved."
+            consumer = None
+
+        form = MeterAssignmentForm(request.POST, consumer=consumer)
+
+        if form.is_valid() and consumer:
+            meter = form.save(commit=False)
+            meter.consumer = consumer
+            meter.save()
+            return redirect('success_page')
+
     else:
-        form = OfficeStaffProfileForm(instance=profile)
-    
-    return render(request, 'update_office_staff_profile.html', {'form': form})
+        form = MeterAssignmentForm()
+
+    return render(request, 'assign_meter.html', {'form': form, 'consumer': consumer, 'error': error})

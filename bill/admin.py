@@ -1,5 +1,8 @@
 from django.contrib import admin
+from .models import Bill
 
-# Register your models here.
-from .models import Bill_Details
-admin.site.register(Bill_Details)
+@admin.register(Bill)
+class BillAdmin(admin.ModelAdmin):
+    list_display = ['meter', 'billmonth', 'duedate', 'unitsconsumed', 'payableamount', 'paid']
+    list_filter = ['billmonth', 'paid']
+    search_fields = ['meter__meter_number', 'consumer__consumer_name']

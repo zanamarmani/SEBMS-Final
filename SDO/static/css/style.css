@@ -27,3 +27,19 @@
     color: red;
 } */
 
+.progress-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.progress-container .title {
+  flex: 1;
+}
+.progress-container .progress {
+  flex: 2;
+  margin: 0 10px;
+}
+.progress-container .action {
+  flex: 0.1;
+}

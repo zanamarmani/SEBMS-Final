@@ -19,6 +19,9 @@ from django.contrib.auth.decorators import login_required
 
 
 def dashboard(request):
+    users = User.objects.all()
+    for user in users:
+        print(f"User: {user.email}, PK: {user.pk}")
     tariff = Tariff.objects.first()  # or use a specific filter to fetch tariff
     consumers = Consumer.objects.count()
 
@@ -27,7 +30,7 @@ def dashboard(request):
     users = User.objects.count()
     # Count total meter readers (assuming 'meter_reader' is a role in the User model)
     meter_readers = User.objects.filter(is_meter_reader=True).count()
-    return render(request, 'sdo/dashboard.html', {'tariff': tariff,'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
+    return render(request, 'sdo/dashboard.html', {'users': users,'tariff': tariff,'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
 
 
 def create_office_staff(request):
@@ -83,65 +86,14 @@ def show_all_consumers(request):
 
 def show_all_users(request):
     users = User.objects.all()
-    return render(request,
- 'sdo/show_all_users.html', {'users': users})
+    return render(request,'sdo/show_all_users.html', {'users': users})
 
 
 
-def update_tariff(request, tariff_id=None):
+def tariff_list(request):
     # Fetch all tariffs for display
     all_tariffs = Tariff.objects.all()
-
-    # If a tariff_id is provided, try to fetch the specific tariff
-    if tariff_id:
-        tariff = Tariff.objects.filter(id=tariff_id).first()  # Use filter().first() to avoid 404 if not found
-    else:
-        tariff = None
-
-    # Get tariff choices from the model
-    tariff_choices = Tariff.TARIFF_CHOICES
-
-    if request.method == 'POST':
-        # Otherwise, process form for updating or creating the tariff
-        tariff_type = request.POST.get('tariff_type')
-        price_100 = request.POST.get('price_100')
-        price_200 = request.POST.get('price_200')
-        price_300 = request.POST.get('price_300')
-        price_above = request.POST.get('price_above')
-
-        # Try to create or update the tariff with the new values
-        try:
-            if tariff:
-                # Update the existing tariff
-                tariff.tariff_type = tariff_type
-                tariff.price_100 = price_100
-                tariff.price_200 = price_200
-                tariff.price_300 = price_300
-                tariff.price_above = price_above
-                tariff.save()
-                return HttpResponse("Tariff updated successfully.")
-            else:
-                # Create a new tariff
-                new_tariff = Tariff(
-                    tariff_type=tariff_type,
-                    price_100=price_100,
-                    price_200=price_200,
-                    price_300=price_300,
-                    price_above=price_above,
-                )
-                new_tariff.save()
-                return HttpResponse("New tariff created successfully.")
-        except IntegrityError:
-            return HttpResponse("A tariff with this type already exists. Please choose a different type.")
-        except ValueError:
-            return HttpResponse("Invalid input. Please ensure all fields are filled out correctly.")
-
-    # Render the update form with the current tariff values (if updating) and list of all tariffs
-    return render(request, 'sdo/update_tariff.html', {
-        'tariff': tariff,
-        'tariff_choices': tariff_choices,
-        'all_tariffs': all_tariffs,
-    })
+    return render(request, 'sdo/tariff_list.html', {'all_tariffs': all_tariffs})
 
 
 
@@ -172,3 +124,31 @@ def sdo_dashboard_show_details(request):
     meter_readers = User.objects.filter(is_meter_reader=True)
 
     return render(request, 'sdo/show_all_users.html',{'consumers': total_consumers,'office_staff': office_staff,'meter_readers': meter_readers})
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Tariff
+from .forms import TariffForm  # Assuming you create a TariffForm
+
+def create_or_get_tariff(request):
+    if request.method == 'POST':
+        form = TariffForm(request.POST)
+        if form.is_valid():
+            # Check if the tariff already exists based on the tariff_type
+            tariff_type = form.cleaned_data['tariff_type']
+            existing_tariff = Tariff.objects.filter(tariff_type=tariff_type).first()
+            
+            if existing_tariff:
+                # If tariff already exists, show a message and redirect
+                messages.info(request, f"Tariff of type '{existing_tariff.get_tariff_type_display()}' already exists.")
+                return redirect('SDO:tariff_list')  # Redirect to a list view or any other view
+            else:
+                # Create new tariff if not found
+                form.save()
+                messages.success(request, "New tariff created successfully!")
+                return redirect('SDOtariff_list')  # Redirect after successful creation
+    else:
+        form = TariffForm()
+
+    return render(request, 'sdo/update_tariff.html', {'form': form})

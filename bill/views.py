@@ -1,13 +1,13 @@
 from django.shortcuts import render
-from consumer.models import Consumer
 # Create your views here.
-
-def calculate_bill(request):
-    consumer_number = Consumer.objects.all()
-    total_amount = 0
-    for consumer in consumer_number:
-        total_amount += consumer.amount_due
-        # Here we need to calculate the bill for each consumer and add it to total_amount
-
-    return render(request,'bill.html')
-
+def calculate_amount_due(units_consumed, tariff):
+    if units_consumed <= 100:
+        amount_due = units_consumed * tariff.price_100
+    elif units_consumed <= 200:
+        amount_due = (100 * tariff.price_100) + ((units_consumed - 100) * tariff.price_200)
+    elif units_consumed <= 300:
+        amount_due = (100 * tariff.price_100) + (100 * tariff.price_200) + ((units_consumed - 200) * tariff.price_300)
+    else:
+        amount_due = (100 * tariff.price_100) + (100 * tariff.price_200) + (100 * tariff.price_300) + ((units_consumed - 300) * tariff.price_above)
+    
+    return amount_due

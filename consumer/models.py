@@ -3,16 +3,19 @@ from django.db import models
 from users.models import User
 from SDO.models import Tariff
 class Consumer(models.Model):
-    # Fields
-    user = models.OneToOneField(User, null=True,on_delete=models.SET_NULL,related_name='consumer')  # Linking Consumer to User model
-    name = models.CharField(max_length=100)  # Consumer's name
-    consumer_number = models.CharField(max_length=100, unique=True)  # Unique consumer number
-    meter_number = models.CharField(max_length=100, unique=True)  # Unique meter number
-    area_number = models.CharField(max_length=100)  # Area number associated with the consumer
-    tariff = models.ForeignKey(Tariff, on_delete=models.CASCADE,null=True) # Tariff type
-    approved = models.BooleanField(default=False)  # Approval status for the consumer
+    DIVISION_CHOICES = [
+        ('division1', 'Division 1'),
+        ('division2', 'Division 2'),
+        ('division3', 'Division 3'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)  # One-to-one with User 
+    consumer_number = models.CharField(max_length=255, unique=True, null=True)  # Unique consumer number   
+    consumer_name = models.CharField(max_length=255,null=True)  # Consumer name
+    consumer_address = models.CharField(max_length=255,null=True)  # Consumer address
+    consumer_tariff = models.ForeignKey(Tariff, on_delete=models.CASCADE,null=True)  # Foreign key to Tariff
+    consumer_division = models.CharField(max_length=255, choices=DIVISION_CHOICES, null=True)  # Consumer division with choices
+    approved = models.BooleanField(default=False) 
 
-    # String representation of the Consumer instance
     def __str__(self):
-        return self.user.email if self.user else self.name
+        return self.consumer_name
 

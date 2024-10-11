@@ -2,10 +2,10 @@ from datetime import timedelta, timezone
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from consumer.forms import ConsumerProfileForm
+from payment.models import Payment
 from users.forms import UserForm
 from .models import Consumer
-from bill.models import Bill, Payment
+from bill.models import Bill
 
 @login_required
 def consumer_home(request):

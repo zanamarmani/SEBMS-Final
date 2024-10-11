@@ -78,12 +78,17 @@
 										</thead>
 										<tbody>
                       <tr>
-                        <td>{{ consumer.name }}</td>
+                        <td>{{ consumer.consumer_name }}</td>
                         <td>{{ consumer.consumer_number }}</td>
                         <td>{{ consumer.meter_number }}</td>
-                        <td>{{ consumer.area_number }}</td>
-                        <td>{{ consumer.tariff }}</td> <!-- get_tariff_display to show the human-readable value -->
+                        <td>{{ consumer.consumer_division }}</td>
+                        <td>{{ consumer.consumer_tariff }}</td> <!-- get_tariff_display to show the human-readable value -->
                         <td>{{ consumer.approved }}</td>
+						<td>
+							{% if not consumer.approved %}
+								<a href="{% url 'officestaff:delete_unapproved_consumer' consumer.pk %}" class="btn btn-danger">Delete</a>
+							{% endif %}
+						</td>
                     </tr>
                     {% endfor %}
 											<!-- <tr>
