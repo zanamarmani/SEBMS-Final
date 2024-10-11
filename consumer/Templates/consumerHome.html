@@ -107,6 +107,7 @@
     </div>
 
     <!-- Bill History Section -->
+<<<<<<< HEAD
     <div class="bill-history-section">
         <h2>Your Bills</h2>
         <div class="table-container">
@@ -151,6 +152,49 @@
             </table>
         </div>
     </div>
+=======
+    <h2>Your Bills</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Consumer Number</th>
+                <th>Amount Due</th>
+                <th>Bill Due Date</th>
+                <th>Month</th>
+                <th>Consumed Units</th>
+                <th>status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if bills %}
+            <tr>
+                <td>{{ bill.id }}</td>
+                <td>{{ bill.consumer.consumer_number }}</td>
+                <td>{{ bill.amount_due }} PKR</td>
+                <td>{{ bill.due_date|date:"M d, Y" }}</td>
+                <td>{{ bill.month|date:"M" }}</td>
+                <td>{{ bill.consumed_units }}</td>
+                <td>
+                    {% if bill.paid %}
+                        Paid
+                    {% else %}
+                        Not Paid
+                    {% endif %}
+                </td>
+                
+                <td>
+                    <!-- Payment Form for each bill -->
+                    {% comment %} <form action="{% url 'consumer:payment_gateway' bill.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">Pay Now</button>
+                    </form> {% endcomment %}
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+>>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
 
     <!-- Payment History Section -->
     <div class="payment-history-section">

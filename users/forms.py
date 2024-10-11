@@ -38,3 +38,4 @@ class UserLoginForm(AuthenticationForm):
             'placeholder': 'Enter your Password',
             'class': 'form-control'
         })
+

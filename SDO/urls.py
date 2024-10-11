@@ -13,8 +13,9 @@ urlpatterns = [
     path('', views.admin_dashboard, name='admin_dashboard'),
     path('approve_new_consumers/', views.approve_new_consumers, name='approve_new_consumers'),
     path('reject_new_consumers/', views.reject_new_consumers, name='reject_new_consumers'),
-    path('add_user/', views.add_user, name='add_user'),
+    path('add_user/', views.create_user, name='add_user'),
     path('show_all_consumers/', views.show_all_consumers, name='show_all_consumers'),
+    path('consumer/<int:consumer_id>/', views.consumer_profile, name='consumer_profile'),
     path('show_all_users/', views.show_all_users, name='show_all_users'),
     path('tariff_list/', views.tariff_list, name='tariff_list'),
     path('update-tariff/', views.create_or_get_tariff, name='update_tariff'),
@@ -27,6 +28,12 @@ urlpatterns = [
     path('user/delete/<int:pk>/', UserDeleteView.as_view(), name='user_delete'),
     path('user/update-password/<int:pk>/', update_password, name='update_password'),
     path('success_page/', success_page,name='success_page'),
+<<<<<<< HEAD
+=======
+    path('sdo/profile/', views.sdo_profile_view, name='sdo_profile'),
+    path('sdo/profile/edit/', views.edit_sdo_profile_view, name='edit_sdo_profile'),
+    path('sdo/profile/create/', views.create_sdo_profile_view, name='create_sdo_profile'),
+>>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
    
 ]
 

@@ -168,33 +168,7 @@
         <button type="submit">{% if tariff %}Update{% else %}Create{% endif %}</button>
 
       </form>
-    </div>
-
-    <h2>All Existing Tariffs</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Tariff Type</th>
-          <th>Price for 100 Units</th>
-          <th>Price for 100-200 Units</th>
-          <th>Price for 200-300 Units</th>
-          <th>Price for Above 300 Units</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for tariff in all_tariffs %}
-        <tr>
-          <td>{{ tariff.get_tariff_type_display }}</td>
-          <td>{{ tariff.price_100 }}</td>
-          <td>{{ tariff.price_200 }}</td>
-          <td>{{ tariff.price_300 }}</td>
-          <td>{{ tariff.price_above }}</td>
-          <td><a href="{% url 'SDO:update_tariff' tariff.id %}">Edit</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    
      <footer class="app-footer">
 		    <div class="container text-center py-3">
 		         <!-- /* This template is free as long as you keep the footer attribution link. If you'd like to use the template without the attribution link, you can buy the commercial license via our website: themes.3rdwavemedia.com Thank you for your support. :) */ -->

@@ -1,5 +1,3 @@
-from django.db import IntegrityError
-from django.http import HttpResponse
 from django.shortcuts import redirect, render,get_object_or_404
 
 # Create your views here.
@@ -17,7 +15,14 @@ from users.forms import UserForm
 
 from django.contrib.auth.decorators import login_required
 
+from .models import sdo_profile
+from .forms import SDOProfileForm,SDOProfileCreateForm
 
+from django.contrib.auth import login
+from .forms import CustomUserCreationForm
+
+
+@login_required
 def dashboard(request):
     users = User.objects.all()
     for user in users:
@@ -30,7 +35,12 @@ def dashboard(request):
     users = User.objects.count()
     # Count total meter readers (assuming 'meter_reader' is a role in the User model)
     meter_readers = User.objects.filter(is_meter_reader=True).count()
+<<<<<<< HEAD
     return render(request, 'sdo/dashboard.html', {'users': users,'tariff': tariff,'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
+=======
+    profile = sdo_profile.objects.get(user=request.user)  # Adjust according to your logic
+    return render(request, 'sdo/dashboard.html', {'profile':profile,'users': users,'tariff': tariff,'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
+>>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
 
 
 def create_office_staff(request):
@@ -84,6 +94,12 @@ def show_all_consumers(request):
     consumers = Consumer.objects.all()
     return render(request, 'sdo/show_all_consumers.html', {'consumers': consumers})
 
+def consumer_profile(request, consumer_id):
+    # Get the consumer profile based on the ID passed in the URL
+    consumer = get_object_or_404(Consumer, id=consumer_id)
+    
+    return render(request, 'profile_consumer.html',{'consumer':consumer})
+
 def show_all_users(request):
     users = User.objects.all()
     return render(request,'sdo/show_all_users.html', {'users': users})
@@ -126,10 +142,14 @@ def sdo_dashboard_show_details(request):
     return render(request, 'sdo/show_all_users.html',{'consumers': total_consumers,'office_staff': office_staff,'meter_readers': meter_readers})
 
 
+<<<<<<< HEAD
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Tariff
 from .forms import TariffForm  # Assuming you create a TariffForm
+=======
+
+>>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
 
 def create_or_get_tariff(request):
     if request.method == 'POST':
@@ -152,3 +172,63 @@ def create_or_get_tariff(request):
         form = TariffForm()
 
     return render(request, 'sdo/update_tariff.html', {'form': form})
+<<<<<<< HEAD
+=======
+
+
+# View to show the SDO profile
+@login_required
+def sdo_profile_view(request):
+    try:
+        sdo_profile_instance = get_object_or_404(sdo_profile, user=request.user)
+        return render(request, 'sdo/sdo_profile_view.html', {'profile': sdo_profile_instance})
+    except:
+        return redirect('SDO:create_sdo_profile')  # Render the profile view if the SDO profile does not exist
+# View to edit the SDO profile
+def edit_sdo_profile_view(request):
+    sdo_profile_instance = get_object_or_404(sdo_profile, user=request.user)
+    
+    if request.method == 'POST':
+        form = SDOProfileForm(request.POST, instance=sdo_profile_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('SDO:sdo_profile')  # Redirect to the profile view after saving
+    else:
+        form = SDOProfileForm(instance=sdo_profile_instance)
+    
+    return render(request, 'sdo/edit_sdo_profile.html', {'form': form})
+
+def create_sdo_profile_view(request):
+    if request.method == 'POST':
+        form = SDOProfileCreateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('SDO:sdo_profile')  # Redirect to profile page after creation
+    else:
+        form = SDOProfileCreateForm()
+
+    return render(request, 'sdo/create_sdo_profile.html', {'form': form})
+
+# views.py
+
+
+def create_user(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_office_staff = form.cleaned_data['is_office_staff']
+            user.is_sdo = form.cleaned_data['is_sdo']
+            user.is_meter_reader = form.cleaned_data['is_meter_reader']
+            user.is_consumer = form.cleaned_data['is_consumer']
+            user.save()
+
+            # Log in the user or redirect to the appropriate page
+            login(request, user)
+            return redirect('some_dashboard')
+
+    else:
+        form = CustomUserCreationForm()
+
+    return render(request, 'sdo/add_user.html', {'form': form})
+>>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
