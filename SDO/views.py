@@ -24,16 +24,19 @@ from .forms import CustomUserCreationForm
 
 @login_required
 def dashboard(request):
-    users = User.objects.all()
-    for user in users:
-        print(f"User: {user.email}, PK: {user.pk}")
-    tariff = Tariff.objects.first()  # or use a specific filter to fetch tariff
-    consumers = Consumer.objects.count()
+    # Check if the user has a profile
+    profile = sdo_profile.objects.filter(user=request.user).first()
 
-    # Count total office staff (assuming 'office_staff' is a role in the User model)
-    office_staffs = User.objects.filter(is_office_staff = True).count()
+    if not profile:
+        pass
+        # If the profile doesn't exist, redirect to profile creation page
+        #return redirect('SDO:create_sdo_profile')  # Adjust with the actual name of your URL
+
+    # If profile exists, continue with dashboard logic
+    tariff = Tariff.objects.first()  # or use specific filters to get a tariff
+    consumers = Consumer.objects.count()
     users = User.objects.count()
-    # Count total meter readers (assuming 'meter_reader' is a role in the User model)
+    office_staffs = User.objects.filter(is_office_staff=True).count()
     meter_readers = User.objects.filter(is_meter_reader=True).count()
 
     return render(request, 'sdo/dashboard.html', {'users': users,'tariff': tariff,'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
@@ -226,10 +229,11 @@ def create_user(request):
 
             # Log in the user or redirect to the appropriate page
             login(request, user)
-            return redirect('some_dashboard')
+            return redirect('SDO:dashboard')
 
     else:
         form = CustomUserCreationForm()
 
     return render(request, 'sdo/add_user.html', {'form': form})
+
 

@@ -8,15 +8,23 @@ class Meter(models.Model):
         ('double', 'Double Phase'),
         ('three', 'Three Phase'),
     ]
-    
-    meter_number = models.CharField(max_length=100,null=True,unique=True)  # Meter number
-    new_reading = models.DecimalField(max_digits=10, decimal_places=2,null=True)  # New meter reading
-    last_reading = models.DecimalField(max_digits=10, decimal_places=2,null=True)  # Last meter reading
+    meter_number = models.IntegerField(null=True, unique=True)  # Meter number should be unique
     meter_type = models.CharField(max_length=10, choices=METER_TYPE_CHOICES, null=True)
-    meter_status = models.BooleanField(default=True,null=True)  # Active (True) or Not (False)
-    consumer = models.ForeignKey(Consumer, on_delete=models.CASCADE,null=True)  # Many-to-one to Consumer
-    processed = models.BooleanField(default=False,null=True) 
-    reading_date = models.DateField(null=True)
+    consumer = models.ForeignKey(Consumer, on_delete=models.CASCADE, null=True)  # Many-to-one to Consumer
 
     def __str__(self):
-        return self.meter_number
+        return str(self.meter_number)
+
+
+class MeterReading(models.Model):
+    meter = models.ForeignKey(Meter, on_delete=models.CASCADE, related_name='readings',null=True)  # Link to Meter
+    new_reading = models.DecimalField(max_digits=10, decimal_places=2, null=True)  # New meter reading
+    last_reading = models.DecimalField(max_digits=10, decimal_places=2, null=True) 
+    meter_status = models.BooleanField(default=True, null=True)  # Active (True) or Not (False)
+    processed = models.BooleanField(default=False, null=True)
+    reading_date = models.DateField(null=True)
+    meter_image = models.ImageField(null=True)
+
+    def __str__(self):
+        return f"Meter: {self.meter.meter_number}, Reading: {self.new_reading}"
+

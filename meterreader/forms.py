@@ -6,7 +6,7 @@ class MeterAssignmentForm(forms.ModelForm):
 
     class Meta:
         model = Meter
-        fields = ['meter_number', 'last_reading', 'meter_type']
+        fields = ['meter_number', 'meter_type']
 
     def __init__(self, *args, **kwargs):
         # Remove 'consumer' from kwargs if present to avoid the error

@@ -10,7 +10,7 @@ from SDO.models import Tariff
 from consumer.forms import ConsumerRegistrationForm
 from consumer.models import Consumer
 from meterreader.forms import MeterAssignmentForm
-from meterreader.models import Meter
+from meterreader.models import Meter, MeterReading
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.contrib import messages
@@ -53,7 +53,7 @@ def register_consumer(request):
         form = ConsumerRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('success_page')  # Redirect to a success page or desired location
+            return redirect('officestaff:home')  # Redirect to a success page or desired location
         else:
             messages.error(request, 'Failed to Register try different email or consumer number')
     else:
@@ -68,7 +68,7 @@ def list_consumers(request):
 
 
 def all_readings(request):
-    readings = Meter.objects.all()
+    readings = MeterReading.objects.all()
     title ="All Readings"
     return render(request, 'all_readings.html', {'readings': readings,'title':title})
 
@@ -123,14 +123,18 @@ def save_meter_data_to_db(request):
 
     # Process and save each meter reading into the local database
     for meter_data in meter_data_list:
-        meter_id = meter_data.get('id', None)  # Unique meter ID from Firebase
+        meter_serial_no = meter_data.get('serial_no', None)  # Serial number of the meter
         date_str = meter_data.get('date', None)  # Date string
-        serial_no = meter_data.get('serial_no', '')  # Serial number of the meter
-        reading = meter_data.get('reading', '')  # Meter reading value
+        reading = meter_data.get('reading', None)  # Meter reading value
+
+        if not meter_serial_no or not date_str or not reading:
+            continue  # Skip if required data is missing
 
         # Convert date from string to Python date object
-        if date_str:
+        try:
             date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            continue  # Skip this entry if date is invalid
 
         try:
             reading = float(reading)  # Convert the reading to float
@@ -139,36 +143,31 @@ def save_meter_data_to_db(request):
 
         reading = int(round(reading))  # Round and convert to integer
 
-        if Meter.objects.filter(meter_number=serial_no, reading_date=date_obj).exists():
-            continue 
+        # Retrieve or create the Meter object based on the serial number
+        meter = Meter.objects.filter(meter_number=meter_serial_no).first()
+        if not meter:
+            continue  # If the meter doesn't exist, skip this entry
+
+        # Check if the reading for this meter on this date already exists
+        if MeterReading.objects.filter(meter=meter, reading_date=date_obj).exists():
+            continue  # Skip if the reading already exists for this meter on this date
+
         # Retrieve the last reading for this meter using filter() and order by the most recent reading
-        last_reading_record = Meter.objects.filter(meter_number=serial_no).order_by('-reading_date').first()
+        last_reading_record = MeterReading.objects.filter(meter=meter).order_by('-reading_date').first()
 
-        if last_reading_record:
-            last_reading = last_reading_record.new_reading  # Use the most recent `new_reading`
-        else:
-            last_reading = 500  # Default last reading if no previous record exists
+        last_reading = last_reading_record.new_reading if last_reading_record else 500  # Default last reading if no previous record
 
-        # Use get_or_create to avoid IntegrityError for unique meter_number
-        meter_reading, created = Meter.objects.get_or_create(
-            meter_number=serial_no,
-            defaults={
-                'last_reading': last_reading,
-                'new_reading': reading,
-                'reading_date': date_obj
-            }
+        # Save the new MeterReading
+        meter_reading = MeterReading.objects.create(
+            meter=meter,
+            last_reading=last_reading,
+            new_reading=reading,
+            reading_date=date_obj,
+            processed=False
         )
 
-        if not created:
-            # If the record already exists, update it
-            meter_reading.last_reading = last_reading
-            meter_reading.new_reading = reading
-            meter_reading.reading_date = date_obj
-            meter_reading.processed= False
-            meter_reading.save()
-
     # After saving, retrieve the saved data to display it
-    meter_list = Meter.objects.all()
+    meter_list = MeterReading.objects.all()
 
     # Render the template with the saved meter data
     return render(request, 'meter_data.html', {'meter_list': meter_list})
