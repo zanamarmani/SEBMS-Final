@@ -149,16 +149,6 @@ def sdo_dashboard_show_details(request):
 
     return render(request, 'sdo/show_all_users.html',{'consumers': total_consumers,'office_staff': office_staff,'meter_readers': meter_readers})
 
-
-<<<<<<< HEAD
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Tariff
-from .forms import TariffForm  # Assuming you create a TariffForm
-=======
-
->>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
-
 def create_or_get_tariff(request):
     if request.method == 'POST':
         form = TariffForm(request.POST)
@@ -180,10 +170,6 @@ def create_or_get_tariff(request):
         form = TariffForm()
 
     return render(request, 'sdo/update_tariff.html', {'form': form})
-<<<<<<< HEAD
-=======
-
-
 # View to show the SDO profile
 @login_required
 def sdo_profile_view(request):
@@ -239,4 +225,4 @@ def create_user(request):
         form = CustomUserCreationForm()
 
     return render(request, 'sdo/add_user.html', {'form': form})
->>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
+
