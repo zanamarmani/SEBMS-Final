@@ -86,7 +86,7 @@
                         <td>{{ consumer.approved }}</td>
 						<td>
 							{% if not consumer.approved %}
-								<a href="{% url 'officestaff:delete_unapproved_consumer' consumer.pk %}" class="btn btn-danger">Delete</a>
+								<a href="{% url 'officestaff:delete_unapproved_consumer' consumer.pk %}" class="btn btn-danger  py-0 px-1 ">Delete</a>
 							{% endif %}
 						</td>
                     </tr>

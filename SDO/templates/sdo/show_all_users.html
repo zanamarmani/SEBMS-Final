@@ -92,11 +92,8 @@
                 
                         {% if user.pk %} 
                         <td>
-<<<<<<< HEAD
-                          <a class="btn-sm app-btn-secondary " href="{% url 'SDO:user_update' user.pk %}">Update User</a>
-=======
                           <a class="btn-sm app-btn-secondary" href="{% url 'SDO:user_update' user.pk %}">Update User</a>
->>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
+
                           <a class="btn-sm app-btn-secondary" href="{% url 'SDO:update_password' user.pk %}">Change User Password</a>
                           <a class="btn-sm app-btn-secondary" href="{% url 'SDO:user_delete' user.pk %}">Delete User</a>
                         </td>

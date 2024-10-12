@@ -2,7 +2,9 @@ from datetime import timedelta, timezone
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from consumer.forms import ConsumerProfileForm
+
+from consumer.forms import ConsumerRegistrationForm
+from meterreader.models import Meter
 from users.forms import UserForm
 from .models import Consumer
 from bill.models import Bill
@@ -97,14 +99,14 @@ def update_profile(request):
     user = request.user
     if request.method == 'POST':
             user_form = UserForm(request.POST, instance=user)
-            consumer_form = ConsumerProfileForm(request.POST, instance=user.consumer)
+            consumer_form = ConsumerRegistrationForm(request.POST, instance=user.consumer)
             if user_form.is_valid() and consumer_form.is_valid():
                 user_form.save()
                 consumer_form.save()
                 return redirect('show_profile')
     else:
         user_form = UserForm(instance=user)
-        consumer_form = ConsumerProfileForm(instance=user.consumer)
+        consumer_form = ConsumerRegistrationForm(instance=user.consumer)
     return render(request, 'profile_edit_data.html', {
             'user_form': user_form,
             'consumer_form': consumer_form,

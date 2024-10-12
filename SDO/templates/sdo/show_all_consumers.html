@@ -81,22 +81,20 @@
 										<tbody>
 											<tr>
 												<td>{{ consumer.consumer_name }}</td>
-<<<<<<< HEAD
+
 												<td>{{ consumer.consumer_number }}</td>
 												<td>{{ consumer.meter_number }}</td>
 												<td>{{ consumer.consumer_division }}</td>
 												<td>{{ consumer.consumer_tariff }}</td>
-=======
 												<td>{{ consumer.consumer_number }}</td>												
 												<td>{{ consumer.consumer_division }}</td>
 												<td>{{ consumer.consumer_tariff }}</td>
 												<td>
 													<!-- Show Details Button -->
-													<a href="{% url 'SDO:consumer_profile' consumer.id %}">
-														<button type="button">Show Details</button>
+													<a  href="{% url 'SDO:consumer_profile' consumer.id %}">
+														<button class="btn-approve" type="button">Show Details</button>
 													</a>
 												</td>
->>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
 											</tr>
 											{% endfor %}
 											<!-- <tr>

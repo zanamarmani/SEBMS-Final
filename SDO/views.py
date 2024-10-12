@@ -35,12 +35,12 @@ def dashboard(request):
     users = User.objects.count()
     # Count total meter readers (assuming 'meter_reader' is a role in the User model)
     meter_readers = User.objects.filter(is_meter_reader=True).count()
-<<<<<<< HEAD
+
     return render(request, 'sdo/dashboard.html', {'users': users,'tariff': tariff,'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
-=======
+
     profile = sdo_profile.objects.get(user=request.user)  # Adjust according to your logic
     return render(request, 'sdo/dashboard.html', {'profile':profile,'users': users,'tariff': tariff,'consumers':consumers,'total_office_staff':office_staffs,'total_users':users,'total_meter_reader':meter_readers})
->>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
+
 
 
 def create_office_staff(request):
@@ -142,14 +142,15 @@ def sdo_dashboard_show_details(request):
     return render(request, 'sdo/show_all_users.html',{'consumers': total_consumers,'office_staff': office_staff,'meter_readers': meter_readers})
 
 
-<<<<<<< HEAD
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Tariff
 from .forms import TariffForm  # Assuming you create a TariffForm
-=======
 
->>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
+
+
+
 
 def create_or_get_tariff(request):
     if request.method == 'POST':
@@ -172,8 +173,8 @@ def create_or_get_tariff(request):
         form = TariffForm()
 
     return render(request, 'sdo/update_tariff.html', {'form': form})
-<<<<<<< HEAD
-=======
+
+
 
 
 # View to show the SDO profile
@@ -231,4 +232,4 @@ def create_user(request):
         form = CustomUserCreationForm()
 
     return render(request, 'sdo/add_user.html', {'form': form})
->>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
+

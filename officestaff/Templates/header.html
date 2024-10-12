@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="description" content="Portal - Bootstrap 5 Admin Dashboard Template For Developers">
-    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">
+    <meta name="author" content="">
     {% load static %}
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
     
@@ -21,33 +21,16 @@
 
     <!-- App CSS -->
     <link id="theme-style" rel="stylesheet" href="{% static 'css/portal.css' %}">
+    <link id="theme-style" rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<<<<<<< HEAD
-=======
+
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
->>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <style>
-        .progress-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .progress-container .title {
-            flex: 1;
-        }
-        .progress-container .progress {
-            flex: 2;
-            margin: 0 10px;
-        }
-        .progress-container .action {
-            flex: 0.1;
-        }
+      
     </style>
 </head>
 
@@ -314,11 +297,9 @@
                                     <!-- <li class="submenu-item"><a class="submenu-link" href="login.html">Login</a></li>
                                     <li class="submenu-item"><a class="submenu-link" href="signup.html">Signup</a></li> -->
                                     <li class="submenu-item"><a class="submenu-link {% if request.resolver_match.url_name == 'assign_meter' %}active{% endif %}" href="{% url 'officestaff:assign_meter' %}">Assign Meter For Consumers</a></li>
-<<<<<<< HEAD
+
                                     <li class="submenu-item"><a class="submenu-link {% if request.resolver_match.url_name == 'save_meter_data' %}active{% endif %}" href="{% url 'officestaff:save_meter_data' %}">Save Meter Data</a></li>
-=======
                                     <li class="submenu-item"><a class="submenu-link {% if request.resolver_match.url_name == 'save_meter_data' %}active{% endif %}" href="{% url 'officestaff:save_meter_data' %}">Fetch Meter Readings</a></li>
->>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
                                     <li class="submenu-item"><a class="submenu-link {% if request.resolver_match.url_name == 'generate_bills' %}active{% endif %}" href="{% url 'officestaff:generate_bills' %}">Generate Bills</a></li>
                                 </ul>
                             </div>
