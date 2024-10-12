@@ -28,9 +28,12 @@ urlpatterns = [
     path('user/delete/<int:pk>/', UserDeleteView.as_view(), name='user_delete'),
     path('user/update-password/<int:pk>/', update_password, name='update_password'),
     path('success_page/', success_page,name='success_page'),
+<<<<<<< HEAD
+=======
     path('sdo/profile/', views.sdo_profile_view, name='sdo_profile'),
     path('sdo/profile/edit/', views.edit_sdo_profile_view, name='edit_sdo_profile'),
     path('sdo/profile/create/', views.create_sdo_profile_view, name='create_sdo_profile'),
+>>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
    
 ]
 

@@ -51,7 +51,11 @@ def update_password(request, pk):
 class UserDeleteView(DeleteView):
     model = User
     template_name = 'registration/user_confirm_delete.html'
+<<<<<<< HEAD
+    success_url = reverse_lazy('user_list')  # Redirect after deletion
+=======
     success_url = reverse_lazy('show_all_users')  # Redirect after deletion
+>>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
 
 def user_login(request):
     # Nested function to handle redirection based on user role

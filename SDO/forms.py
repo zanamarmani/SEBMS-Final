@@ -1,14 +1,20 @@
 # forms.py
 from django import forms
+<<<<<<< HEAD
+from .models import Tariff
+=======
 from .models import Tariff,sdo_profile
 
 from django.contrib.auth.forms import UserCreationForm
 from users.models import User  # Assuming you have a custom User model
+>>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710
 
 class TariffForm(forms.ModelForm):
     class Meta:
         model = Tariff
         fields = ['tariff_type', 'price_100', 'price_200', 'price_300', 'price_above']
+<<<<<<< HEAD
+=======
 
 
 
@@ -62,3 +68,4 @@ class CustomUserCreationForm(UserCreationForm):
             cleaned_data['is_consumer'] = True
 
         return cleaned_data
+>>>>>>> aa2445d95d16f8e1d3d9a3582043f4ff8aa50710

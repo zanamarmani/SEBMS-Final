@@ -2,8 +2,7 @@ from datetime import timedelta, timezone
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from meterreader.models import Meter
-from payment.models import Payment
+from consumer.forms import ConsumerProfileForm
 from users.forms import UserForm
 from .models import Consumer
 from bill.models import Bill
