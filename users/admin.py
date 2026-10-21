@@ -1,7 +1,7 @@
 from django.contrib import admin
-from consumer.models import User, Consumer
 
-from django.contrib import admin
+from consumer.models import Consumer
+
 from .models import User
 
 @admin.register(User)
