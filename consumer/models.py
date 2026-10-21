@@ -14,7 +14,12 @@ class Consumer(models.Model):
     consumer_address = models.CharField(max_length=255,null=True)  # Consumer address
     consumer_tariff = models.ForeignKey(Tariff, on_delete=models.CASCADE,null=True)  # Foreign key to Tariff
     consumer_division = models.CharField(max_length=255, choices=DIVISION_CHOICES, null=True)  # Consumer division with choices
-    approved = models.BooleanField(default=False) 
+    approved = models.BooleanField(default=False)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['approved'], name='consumer_approved_idx'),
+        ]
 
     def __str__(self):
         return self.consumer_name

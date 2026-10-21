@@ -1,118 +1,89 @@
-from datetime import timedelta, timezone
-from django.shortcuts import redirect, render, get_object_or_404
-from django.contrib.auth.decorators import login_required
+"""Consumer API views — public registration, staff management, self profile."""
+from django.db.models import Prefetch
+from django.http import Http404
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.views import APIView
 
-
-from consumer.forms import ConsumerRegistrationForm
+from core.permissions import IsConsumer, IsOfficeStaff
+from consumer.models import Consumer
+from consumer.serializers import (
+    ConsumerRegistrationSerializer,
+    ConsumerSelfUpdateSerializer,
+    ConsumerSerializer,
+)
 from meterreader.models import Meter
-from users.forms import UserForm
-from .models import Consumer
-from bill.models import Bill
-
-@login_required
-def consumer_home(request):
-    consumer = get_object_or_404(Consumer, user=request.user)  # Get the consumer linked to the logged-in user
-    status = consumer.approved
-    # Fetch the consumer's bills and payment history
-    meters = Meter.objects.filter(consumer=consumer)
-    for meter in meters:
-        bill = Bill.objects.filter(meter=meter)
-        bill.due_date = bill.month + timedelta(days=15)
-    if status:
-        bills = Bill.objects.filter(meter=meter).order_by('-month')
-        context = {
-        'consumer': consumer,  # Pass the consumer's profile information
-        'bills': bills,  # Pass the consumer's bills
-          # Pass the consumer's payment history
-        }
-        return render(request, 'consumerHome.html', context)
-    else:
-        return render(request, 'consumerHome.html', {'consumer': consumer, 'status': status })  # Render the consumer home page with the consumer's profile information and status
-
-def payment_gateway(request, bill_id):
-    bill = get_object_or_404(Bill, id=bill_id)
-    return render(request, 'pay_online.html', {'bill': bill})
 
 
+class RegisterConsumerView(APIView):
+    """POST /api/v1/consumers/register/ — public self-registration."""
 
-import hashlib
-import requests
-from django.shortcuts import render
-from django.conf import settings
-from django.http import HttpResponseRedirect
+    permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth"
 
-def generate_hash(merchant_id, password, integrity_salt, amount, order_ref):
-    string_to_hash = f"{merchant_id}:{password}:{amount}:{order_ref}:{integrity_salt}"
-    return hashlib.sha256(string_to_hash.encode('utf-8')).hexdigest()
-
-def jazzcash_payment(request, bill_id):
-    bill = get_object_or_404(Bill, id=bill_id)
-    consumer = bill.consumer
-    amount = bill.amount_due
-    order_ref = str(bill.id) + str(timezone.now().timestamp())
-    merchant_id = settings.JAZZCASH_MERCHANT_ID
-    password = settings.JAZZCASH_PASSWORD
-    integrity_salt = settings.JAZZCASH_INTEGRITY_SALT
-    
-    hash = generate_hash(merchant_id, password, integrity_salt, amount, order_ref)
-    
-    # JazzCash API URL
-    jazzcash_url = "https://sandbox.jazzcash.com.pk/CustomerPortal/API/PaymentRequest.php"
-    
-    payload = {
-        "pp_MerchantID": merchant_id,
-        "pp_Password": password,
-        "pp_Amount": amount * 100,  # JazzCash expects amount in Paisas
-        "pp_TxnRefNo": order_ref,
-        "pp_Description": f"Bill Payment for {consumer.consumer_number}",
-        "pp_ReturnURL": "http://127.0.0.1:8000/payment_success/",  # Replace with your success URL
-        "pp_SecureHash": hash,
-    }
-    
-    response = requests.post(jazzcash_url, data=payload)
-    
-    if response.status_code == 200:
-        return HttpResponseRedirect(response.json().get('pp_AuthURL'))
-    else:
-        return render(request, 'payment_failed.html', {'error': response.text})
+    def post(self, request):
+        serializer = ConsumerRegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        consumer = serializer.save()
+        return Response(
+            ConsumerSerializer(consumer).data,
+            status=status.HTTP_201_CREATED,
+        )
 
 
-from django.shortcuts import render
-from django.http import HttpResponse
+class ConsumerViewSet(viewsets.ModelViewSet):
+    """Consumer management.
 
-def payment_success(request):
-    # Update bill status based on returned transaction details
-    return render(request, 'payment_success.html')
+    - list/retrieve/update/destroy: office staff, SDO, superuser
+    - me: the authenticated consumer's own profile
+    """
 
-def payment_failed(request):
-    # Show an error page
-    return render(request, 'payment_failed.html')
+    serializer_class = ConsumerSerializer
+    search_fields = ["consumer_number", "consumer_name", "consumer_address"]
+    filterset_fields = ["approved", "consumer_division", "consumer_tariff"]
+    ordering_fields = ["id", "consumer_number", "consumer_name"]
 
-@login_required
-def show_profile(request):
-    consumer = get_object_or_404(Consumer, user=request.user)
-    return render(request,'profile_consumer.html',{'consumer': consumer})
+    def get_permissions(self):
+        if self.action == "me":
+            return [IsConsumer()]
+        if self.action in ("list", "retrieve"):
+            return [IsOfficeStaff()]
+        return [IsOfficeStaff()]
 
-@login_required
-def update_profile(request):
-    consumer = get_object_or_404(Consumer, user=request.user)
-    user = request.user
-    if request.method == 'POST':
-            user_form = UserForm(request.POST, instance=user)
-            consumer_form = ConsumerRegistrationForm(request.POST, instance=user.consumer)
-            if user_form.is_valid() and consumer_form.is_valid():
-                user_form.save()
-                consumer_form.save()
-                return redirect('show_profile')
-    else:
-        user_form = UserForm(instance=user)
-        consumer_form = ConsumerRegistrationForm(instance=user.consumer)
-    return render(request, 'profile_edit_data.html', {
-            'user_form': user_form,
-            'consumer_form': consumer_form,
-            'consumer': consumer
-            })
+    def get_queryset(self):
+        qs = (
+            Consumer.objects.select_related("consumer_tariff", "user")
+            .prefetch_related(Prefetch("meters", queryset=Meter.objects.only("meter_number")))
+            .order_by("id")
+        )
+        user = self.request.user
+        if user.is_superuser or user.is_sdo or user.is_office_staff:
+            return qs
+        return qs.filter(user=user)
 
-def show_bills(request):
-    consumer = get_object_or_404(Consumer, user=request.user)
-    return render(request, 'show_bill.html',{'consumer': consumer})
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        if not (request.user.is_superuser or request.user.is_sdo or request.user.is_office_staff):
+            serializer = ConsumerSelfUpdateSerializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(ConsumerSerializer(instance).data)
+        return super().update(request, *args, **kwargs)
+
+    @action(detail=False, methods=["get", "patch"], permission_classes=[IsConsumer])
+    def me(self, request):
+        consumer = Consumer.objects.select_related("consumer_tariff", "user").filter(
+            user=request.user
+        ).first()
+        if consumer is None:
+            raise Http404("Consumer profile not found.")
+        if request.method == "PATCH":
+            serializer = ConsumerSelfUpdateSerializer(consumer, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        return Response(ConsumerSerializer(consumer).data)

@@ -1,6 +1,0 @@
-<h1>Payment History</h1>
-<ul>
-    {% for payment in payments %}
-    <li>{{ payment.payment_date }} - {{ payment.amount_paid }} (for {{ payment.bill.month }})</li>
-    {% endfor %}
-</ul>

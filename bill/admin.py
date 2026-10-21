@@ -5,4 +5,4 @@ from .models import Bill
 class BillAdmin(admin.ModelAdmin):
     list_display = ['meter', 'billmonth', 'duedate', 'unitsconsumed', 'payableamount', 'paid']
     list_filter = ['billmonth', 'paid']
-    search_fields = ['meter__meter_number', 'consumer__consumer_name']
+    search_fields = ['meter__meter_number', 'meter__consumer__consumer_name', 'meter__consumer__consumer_number']
