@@ -1,4 +1,12 @@
 firebase_credentials/serviceAccountKey.json
 *.pyc
 __pycache__/
-
+.env
+media/
+staticfiles/
+celerybeat-schedule
+celerybeat.pid
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
