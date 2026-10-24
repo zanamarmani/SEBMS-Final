@@ -1,0 +1,24 @@
+name: Publish tested scanner APK
+on:
+  push:
+    branches: [scanner-apk-build]
+    paths: [.github/workflows/publish-scanner.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download exact tested artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 40086533071 --repo zanamarmani/SEBMS-Final --name SEBMS-Meter-Scanner-Android-test --dir apk
+          mv apk/app-debug.apk apk/SEBMS-Meter-Scanner-test.apk
+      - name: Publish Android test download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create scanner-v1.0.0-test --repo zanamarmani/SEBMS-Final --target eae8d6cbd714513f34ea5c2bcdc7a76ffbba3539 --prerelease --title "SEBMS Meter Scanner — Android test build" --notes "Firebase-configured Android test APK. Build, analyzer and three automated tests passed. Physical-device camera/OCR, reader sign-in and reading sync still require verification. Firebase reader accounts are separate from Django accounts." "apk/SEBMS-Meter-Scanner-test.apk#SEBMS Android test APK"
