@@ -13,6 +13,7 @@ import {
   Td,
 } from "@/components/ui";
 import { api } from "@/lib/api";
+import { firebaseSyncMessage, type FirebaseSyncResult } from "@/lib/firebase-sync";
 import { dateOnly, errorMessage, unitsBetween } from "@/lib/format";
 import type { MeterReading, Paginated } from "@/lib/types";
 
@@ -51,13 +52,12 @@ export default function OfficeReadingsPage() {
     setNotice("");
     setError("");
     try {
-      const res = await api<{ task_id: string; status: string }>(
+      const res = await api<FirebaseSyncResult>(
         "/meter-readings/sync/",
         { method: "POST" },
       );
-      setNotice(
-        `Firebase sync queued (task ${res.task_id}). Requires a running Celery worker.`,
-      );
+      setNotice(firebaseSyncMessage(res));
+      load();
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -72,7 +72,7 @@ export default function OfficeReadingsPage() {
           Meter readings
         </h1>
         <Button loading={taskBusy} onClick={() => void sync()}>
-          Sync → Firebase
+          Sync from Firebase
         </Button>
       </div>
       {notice && <Alert tone="success">{notice}</Alert>}

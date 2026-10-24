@@ -9,7 +9,8 @@ from core.permissions import CanCaptureReadings, IsConsumer, IsOfficeStaff
 from consumer.models import Consumer
 from meterreader.models import Meter, MeterReading
 from meterreader.serializers import MeterReadingSerializer, MeterSerializer
-from meterreader.tasks import sync_meter_readings_firebase
+from core.services.firebase import fetch_meter_list
+from core.services.meter_readings import ingest_meter_data
 
 
 class MeterViewSet(viewsets.ModelViewSet):
@@ -66,16 +67,14 @@ class MeterReadingViewSet(viewsets.ModelViewSet):
 
 
 class SyncMeterReadingsView(APIView):
-    """POST /api/v1/meter-readings/sync/ — enqueue Firestore sync task."""
+    """Import Firestore readings immediately without requiring a queue worker."""
 
     permission_classes = [IsOfficeStaff]
 
     def post(self, request):
-        task = sync_meter_readings_firebase.delay()
-        return Response(
-            {"task_id": task.id, "status": "PENDING"},
-            status=status.HTTP_202_ACCEPTED,
-        )
+        records = fetch_meter_list(strict=True)
+        stats = ingest_meter_data(records)
+        return Response({"status": "COMPLETED", **stats})
 
 
 class MyMetersView(APIView):

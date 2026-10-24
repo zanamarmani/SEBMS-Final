@@ -41,6 +41,7 @@ def _parse_reading(value: Any) -> int:
     return int(round(float(value)))
 
 
+@transaction.atomic
 def ingest_meter_data(records: Iterable[dict]) -> dict:
     """Ingest external meter-reading records (Firestore-shaped dicts).
 
@@ -69,7 +70,7 @@ def ingest_meter_data(records: Iterable[dict]) -> dict:
     serials = {serial for serial, _, _ in parsed}
     meters_by_serial: dict[int, Meter] = {
         m.meter_number: m
-        for m in Meter.objects.filter(meter_number__in=serials).only("id", "meter_number")
+        for m in Meter.objects.select_for_update().filter(meter_number__in=serials).order_by("id").only("id", "meter_number")
     }
 
     valid = [(s, d, r) for s, d, r in parsed if s in meters_by_serial]

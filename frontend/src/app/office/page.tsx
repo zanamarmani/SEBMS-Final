@@ -11,6 +11,7 @@ import {
   StatCard,
 } from "@/components/ui";
 import { api } from "@/lib/api";
+import { firebaseSyncMessage, type FirebaseSyncResult } from "@/lib/firebase-sync";
 import { errorMessage } from "@/lib/format";
 import type { OfficeStaffProfile, Paginated } from "@/lib/types";
 
@@ -74,6 +75,12 @@ export default function OfficeHomePage() {
     setTaskError("");
     setTaskNotice("");
     try {
+      if (key === "sync") {
+        const result = await api<FirebaseSyncResult>(path, { method: "POST" });
+        setTaskNotice(firebaseSyncMessage(result));
+        load();
+        return;
+      }
       const res = await api<{ task_id: string; status: string }>(path, {
         method: "POST",
       });
@@ -122,7 +129,7 @@ export default function OfficeHomePage() {
       <div className="grid gap-3 lg:grid-cols-2">
         <Card
           title="Quick actions"
-          description="Async tasks via Celery (acks_late)."
+          description="Import scanner readings and generate bills."
         >
           <div className="flex flex-wrap gap-2">
             <Button

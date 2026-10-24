@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from django.conf import settings
+from rest_framework.exceptions import APIException
 
 logger = logging.getLogger(__name__)
 
@@ -36,27 +36,38 @@ def get_firestore_db() -> Any:
         return _firestore_db
     except Exception:
         _init_failed = True
-        logger.exception("Firestore initialization failed; meter sync will return no data")
+        logger.error("Firestore initialization failed")
         return None
 
 
-def fetch_meter_list() -> list[dict]:
+class MeterSyncUnavailable(APIException):
+    status_code = 503
+    default_detail = "Firebase readings could not be fetched. Please retry shortly."
+
+
+def fetch_meter_list(*, strict: bool = False) -> list[dict]:
     """Read the meter list document from Firestore.
 
-    Returns [] on any failure — callers must tolerate empty input.
+    Legacy callers receive [] on failure; manual sync uses strict=True to report errors.
     """
     db = get_firestore_db()
     if db is None:
+        if strict:
+            raise MeterSyncUnavailable()
         return []
 
     try:
-        doc = db.collection("meters").document("your_doc_id").get()
+        doc = db.collection("meters").document("your_doc_id").get(timeout=15, retry=None)
         if not doc.exists:
             logger.warning("Firestore document meters/your_doc_id does not exist")
             return []
         data = doc.to_dict() or {}
         meter_list = data.get("meter_list", [])
-        return meter_list if isinstance(meter_list, list) else []
+        if not isinstance(meter_list, list):
+            raise ValueError("Invalid meter_list format")
+        return meter_list
     except Exception:
-        logger.exception("Failed to fetch meter list from Firestore")
+        logger.error("Failed to fetch meter list from Firestore")
+        if strict:
+            raise MeterSyncUnavailable() from None
         return []
