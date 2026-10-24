@@ -8,6 +8,7 @@ import { homeFor, useAuth } from "@/lib/auth";
 import { CenteredSpinner } from "@/components/ui";
 
 export default function LandingPage() {
+  const apkUrl = process.env.NEXT_PUBLIC_SCANNER_APK_URL;
   const { user, status } = useAuth();
   const router = useRouter();
 
@@ -76,6 +77,16 @@ export default function LandingPage() {
           Consumer registration
         </Link>
       </div>
+      <section className="w-full max-w-3xl rounded-xl border border-blue-200 bg-blue-50 p-6" aria-labelledby="scanner-heading">
+        <h2 id="scanner-heading" className="text-xl font-semibold text-gray-900">SEBMS Meter Scanner for Android</h2>
+        <p className="mt-2 text-sm text-gray-600">Scan your meter, verify its number and reading, and sync with SEBMS using your assigned reader account.</p>
+        {apkUrl ? (
+          <a href={apkUrl} className="mt-4 inline-flex rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700">Download Android APK</a>
+        ) : (
+          <p className="mt-4 text-sm font-medium text-gray-600">Android download coming soon</p>
+        )}
+        <p className="mt-3 text-xs text-gray-500">Android only. A provisioned meter-reader account is required. After downloading, open the APK and follow Android’s installation prompts.</p>
+      </section>
       <div className="grid max-w-3xl gap-3 text-left sm:grid-cols-2 md:grid-cols-4">
         {[
           ["SDO", "Tariffs, approvals, users, stats"],

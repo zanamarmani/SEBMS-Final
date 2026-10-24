@@ -10,7 +10,12 @@ class Reading {
     if (!RegExp(r'^\d+$').hasMatch(value)) {
       throw const FormatException('Enter a whole non-negative reading');
     }
-    final day = '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-    return {'serial_no': int.parse(serial), 'reading': int.parse(value), 'date': day};
+    final day =
+        '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    return {
+      'serial_no': int.parse(serial),
+      'reading': int.parse(value),
+      'date': day,
+    };
   }
 }
