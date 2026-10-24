@@ -35,6 +35,8 @@ jobs:
           from pathlib import Path
           p=Path('android/app/build.gradle.kts')
           p.write_text(p.read_text().replace('com.sebms.sebms_scanner','com.sebms.meter_scanner').replace('minSdk = flutter.minSdkVersion','minSdk = 23'))
+          p=Path('android/app/src/main/kotlin/com/sebms/sebms_scanner/MainActivity.kt')
+          p.write_text(p.read_text().replace('package com.sebms.sebms_scanner','package com.sebms.meter_scanner'))
           p=Path('android/app/src/main/AndroidManifest.xml')
           p.write_text(p.read_text().replace('<application','<uses-permission android:name="android.permission.INTERNET" />\n    <application',1).replace('android:label="sebms_scanner"','android:label="SEBMS Meter Scanner"'))
           PY
