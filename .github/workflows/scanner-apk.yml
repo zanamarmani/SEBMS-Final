@@ -28,7 +28,9 @@ jobs:
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
       - name: Generate Android shell
         run: |
+          cp pubspec.lock "$RUNNER_TEMP/scanner-pubspec.lock"
           flutter create --platforms=android --org com.sebms --project-name sebms_scanner --no-pub .
+          cp "$RUNNER_TEMP/scanner-pubspec.lock" pubspec.lock
           python3 - <<'PY'
           from pathlib import Path
           p=Path('android/app/build.gradle.kts')
@@ -47,3 +49,4 @@ jobs:
           path: mobile_scanner/build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
           retention-days: 14
+
