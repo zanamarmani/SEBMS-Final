@@ -1,0 +1,19 @@
+name: sebms_scanner
+description: SEBMS field meter reading scanner
+publish_to: none
+version: 1.0.0+1
+environment:
+  sdk: '>=3.4.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: any
+  firebase_auth: any
+  cloud_firestore: any
+  image_picker: any
+  google_mlkit_text_recognition: any
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+flutter:
+  uses-material-design: true
