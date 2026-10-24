@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from bill.models import Bill
 from bill.serializers import BillSerializer
-from bill.tasks import generate_monthly_bills
+from core.services.meter_readings import generate_bills_for_unprocessed_readings
 from core.pagination import CursorPaginationBill
 from core.permissions import IsOfficeStaff
 
@@ -39,13 +39,10 @@ class BillViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class GenerateBillsView(APIView):
-    """POST /api/v1/bills/generate/ — enqueue bulk bill generation."""
+    """POST /api/v1/bills/generate/ — complete bill generation immediately."""
 
     permission_classes = [IsOfficeStaff]
 
     def post(self, request):
-        task = generate_monthly_bills.delay()
-        return Response(
-            {"task_id": task.id, "status": "PENDING"},
-            status=status.HTTP_202_ACCEPTED,
-        )
+        stats = generate_bills_for_unprocessed_readings()
+        return Response({"status": "COMPLETED", **stats})

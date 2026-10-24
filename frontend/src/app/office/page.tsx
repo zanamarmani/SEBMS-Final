@@ -11,6 +11,7 @@ import {
   StatCard,
 } from "@/components/ui";
 import { api } from "@/lib/api";
+import { billGenerationMessage, type BillGenerationResult } from "@/lib/bill-generation";
 import { firebaseSyncMessage, type FirebaseSyncResult } from "@/lib/firebase-sync";
 import { errorMessage } from "@/lib/format";
 import type { OfficeStaffProfile, Paginated } from "@/lib/types";
@@ -70,7 +71,7 @@ export default function OfficeHomePage() {
     return () => clearTimeout(id);
   }, [load]);
 
-  async function runTask(key: string, path: string, label: string) {
+  async function runTask(key: string, path: string) {
     setTaskBusy(key);
     setTaskError("");
     setTaskNotice("");
@@ -81,13 +82,9 @@ export default function OfficeHomePage() {
         load();
         return;
       }
-      const res = await api<{ task_id: string; status: string }>(path, {
-        method: "POST",
-      });
-      setTaskNotice(
-        `${label} queued (task ${res.task_id}, ${res.status}). ` +
-          "It runs when the Celery worker is active — refresh lists shortly.",
-      );
+      const result = await api<BillGenerationResult>(path, { method: "POST" });
+      setTaskNotice(billGenerationMessage(result));
+      load();
     } catch (err) {
       setTaskError(errorMessage(err));
     } finally {
@@ -135,7 +132,7 @@ export default function OfficeHomePage() {
             <Button
               loading={taskBusy === "sync"}
               onClick={() =>
-                void runTask("sync", "/meter-readings/sync/", "Firebase sync")
+                void runTask("sync", "/meter-readings/sync/")
               }
             >
               Sync readings → Firebase
@@ -144,7 +141,7 @@ export default function OfficeHomePage() {
               variant="secondary"
               loading={taskBusy === "bills"}
               onClick={() =>
-                void runTask("bills", "/bills/generate/", "Bill generation")
+                void runTask("bills", "/bills/generate/")
               }
             >
               Generate monthly bills

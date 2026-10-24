@@ -12,7 +12,6 @@ from decimal import Decimal
 from typing import Any, Iterable
 
 from django.db import transaction
-from django.db.models import Max
 from django.utils import timezone
 
 from bill.models import Bill
@@ -25,8 +24,8 @@ from meterreader.models import Meter, MeterReading
 
 logger = logging.getLogger(__name__)
 
-# Legacy default applied when a meter has no prior reading.
-INITIAL_LAST_READING = Decimal("500")
+# A newly registered meter starts at zero.
+INITIAL_LAST_READING = Decimal("0")
 
 
 def _parse_date(value: Any) -> date_cls:
@@ -85,26 +84,26 @@ def ingest_meter_data(records: Iterable[dict]) -> dict:
         ).values_list("meter_id", "reading_date")
     )
 
-    # Latest prior reading per meter — single query.
-    latest_by_meter: dict[int, Decimal] = dict(
-        MeterReading.objects.filter(
-            meter_id__in={meters_by_serial[s].id for s, _, _ in valid}
-        )
-        .values("meter_id")
-        .annotate(latest=Max("new_reading"))
-        .values_list("meter_id", "latest")
-    )
+    latest_by_meter = {}
+    for item in MeterReading.objects.filter(
+        meter_id__in=[m.id for m in meters_by_serial.values()]
+    ).order_by("reading_date", "id"):
+        latest_by_meter[item.meter_id] = (item.reading_date, item.new_reading)
 
     to_create: list[MeterReading] = []
     seen_pairs: set[tuple[int, date_cls]] = set()
-    for serial, reading_date, reading in valid:
+    for serial, reading_date, reading in sorted(valid, key=lambda item: (item[0], item[1])):
         meter = meters_by_serial[serial]
         pair = (meter.id, reading_date)
         if pair in existing_pairs or pair in seen_pairs:
             stats["skipped"] += 1
             continue
+        previous_date, last = latest_by_meter.get(meter.id, (None, INITIAL_LAST_READING))
+        if reading < last or (previous_date is not None and reading_date <= previous_date):
+            stats["invalid"] += 1
+            continue
         seen_pairs.add(pair)
-        last = latest_by_meter.get(meter.id)
+        latest_by_meter[meter.id] = (reading_date, Decimal(reading))
         to_create.append(
             MeterReading(
                 meter=meter,
@@ -124,83 +123,59 @@ def ingest_meter_data(records: Iterable[dict]) -> dict:
     return stats
 
 
+@transaction.atomic
 def generate_bills_for_unprocessed_readings() -> dict:
-    """Generate bills for every unprocessed meter reading.
+    """Bill consumption once per meter and reading month, using tariff slabs.
 
-    Corrects the legacy implementation which queried fields removed in
-    migration 0003 (Meter.processed / Meter.new_reading). Runs in a single
-    transaction with bulk_create + bulk_update; duplicate bills for the same
-    (meter, billmonth) are blocked by a DB unique constraint.
+    Matching meters are locked to serialize imports and concurrent generation.
+    Additional readings extend an unpaid monthly bill; paid bills stay intact.
     """
     bill_date = timezone.localdate()
-    duedate = bill_date + timedelta(days=DUE_TERM_DAYS)
-    stats = {"processed": 0, "bills_created": 0, "skipped": 0}
-
-    readings = (
-        MeterReading.objects.filter(processed=False)
-        .select_related("meter__consumer__consumer_tariff")
-        .order_by("id")
-    )
-
-    bills: list[Bill] = []
-    to_mark: list[MeterReading] = []
-
+    stats = {"processed": 0, "bills_created": 0, "bills_updated": 0, "skipped": 0}
+    meter_ids = MeterReading.objects.filter(processed=False).values("meter_id")
+    list(Meter.objects.select_for_update().filter(pk__in=meter_ids).order_by("pk"))
+    readings = MeterReading.objects.filter(processed=False).select_related(
+        "meter__consumer__consumer_tariff"
+    ).order_by("meter_id", "reading_date", "id")
+    groups = {}
     for reading in readings:
         consumer = reading.meter.consumer if reading.meter else None
-        if consumer is None or not consumer.approved:
+        if (consumer is None or not consumer.approved or consumer.consumer_tariff is None
+                or reading.reading_date is None or reading.new_reading is None
+                or reading.last_reading is None or reading.new_reading < reading.last_reading):
             stats["skipped"] += 1
             continue
+        month = reading.reading_date.replace(day=1)
+        groups.setdefault((reading.meter_id, month), []).append(reading)
 
-        tariff = consumer.consumer_tariff
-        if tariff is None:
-            logger.warning(
-                "No tariff for consumer %s; skipping reading %s",
-                consumer.id,
-                reading.id,
-            )
-            stats["skipped"] += 1
+    for (meter_id, month), items in groups.items():
+        # Month range also recognizes bills created by the legacy daily-date code.
+        following_month = (month.replace(day=28) + timedelta(days=4)).replace(day=1)
+        existing = list(Bill.objects.filter(
+            meter_id=meter_id, billmonth__gte=month, billmonth__lt=following_month
+        ))
+        if len(existing) > 1 or (existing and existing[0].paid):
+            stats["skipped"] += len(items)
             continue
-
-        units_consumed = Decimal(reading.new_reading) - Decimal(reading.last_reading)
-        if units_consumed < 0:
-            logger.warning(
-                "Negative consumption on reading %s (new=%s last=%s); skipping",
-                reading.id,
-                reading.new_reading,
-                reading.last_reading,
-            )
-            stats["skipped"] += 1
-            continue
-
-        payable = calculate_bill_amount(units_consumed, tariff)
-        bills.append(
-            Bill(
-                billmonth=bill_date,
-                duedate=duedate,
-                detectionunit=Decimal("0.00"),
-                averageunit=Decimal("0.00"),
-                units=units_consumed,
-                unitsconsumed=units_consumed,
-                payableamount=payable,
-                payable_after_due_date=payable_after_due_date(payable),
-                meter=reading.meter,
-                paid=False,
-            )
+        units = sum((r.new_reading - r.last_reading for r in items), Decimal("0"))
+        bill = existing[0] if existing else Bill(
+            meter_id=meter_id, billmonth=month,
+            duedate=bill_date + timedelta(days=DUE_TERM_DAYS),
+            detectionunit=Decimal("0"), averageunit=Decimal("0"), paid=False,
         )
-        to_mark.append(reading)
-        stats["processed"] += 1
-
-    if bills:
-        try:
-            with transaction.atomic():
-                created = Bill.objects.bulk_create(bills)
-                MeterReading.objects.filter(
-                    id__in=[r.id for r in to_mark]
-                ).update(processed=True)
-                stats["bills_created"] = len(created)
-        except Exception:
-            logger.exception("Bill generation failed; transaction rolled back")
-            raise
+        if existing:
+            if bill.unitsconsumed is None:
+                stats["skipped"] += len(items)
+                continue
+            units += bill.unitsconsumed
+        tariff = items[0].meter.consumer.consumer_tariff
+        bill.units = bill.unitsconsumed = units
+        bill.payableamount = calculate_bill_amount(units, tariff)
+        bill.payable_after_due_date = payable_after_due_date(bill.payableamount)
+        bill.save()
+        MeterReading.objects.filter(pk__in=[r.pk for r in items]).update(processed=True)
+        stats["processed"] += len(items)
+        stats["bills_updated" if existing else "bills_created"] += 1
 
     logger.info("Bill generation complete: %s", stats)
     return stats

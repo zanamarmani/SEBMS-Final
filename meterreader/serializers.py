@@ -1,6 +1,7 @@
 """Meter & meter-reading serializers."""
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import FileExtensionValidator
+from django.db import transaction
 from rest_framework import serializers
 
 from consumer.models import Consumer
@@ -70,9 +71,13 @@ class MeterReadingSerializer(serializers.ModelSerializer):
             ) from exc
         return image
 
+    @transaction.atomic
     def create(self, validated_data: dict) -> MeterReading:
         """Auto-fill last_reading from the meter's most recent reading."""
-        meter = validated_data["meter"]
+        meter = Meter.objects.select_for_update().get(pk=validated_data["meter"].pk)
+        date = validated_data["reading_date"]
+        if MeterReading.objects.filter(meter=meter, reading_date__gte=date).exists():
+            raise serializers.ValidationError({"reading_date": "Use a date after this meter’s latest reading."})
         last = (
             MeterReading.objects.filter(meter=meter)
             .order_by("-reading_date", "-id")

@@ -13,6 +13,7 @@ import {
   Td,
 } from "@/components/ui";
 import { api } from "@/lib/api";
+import { billGenerationMessage, type BillGenerationResult } from "@/lib/bill-generation";
 import { dateOnly, errorMessage, money } from "@/lib/format";
 import type { Bill, CursorPaginated } from "@/lib/types";
 
@@ -52,13 +53,12 @@ export default function OfficeBillsPage() {
     setNotice("");
     setError("");
     try {
-      const res = await api<{ task_id: string; status: string }>(
+      const res = await api<BillGenerationResult>(
         "/bills/generate/",
         { method: "POST" },
       );
-      setNotice(
-        `Bill generation queued (task ${res.task_id}). Requires a running Celery worker — refresh shortly.`,
-      );
+      setNotice(billGenerationMessage(res));
+      load();
     } catch (err) {
       setError(errorMessage(err));
     } finally {

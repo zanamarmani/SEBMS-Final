@@ -20,7 +20,7 @@ class Meter(models.Model):
 class MeterReading(models.Model):
     meter = models.ForeignKey(Meter, on_delete=models.CASCADE, related_name='readings', null=True)  # Link to Meter
     new_reading = models.DecimalField(max_digits=10, decimal_places=2, null=True)  # New meter reading
-    last_reading = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    last_reading = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=0)
     meter_status = models.BooleanField(default=True, null=True)  # Active (True) or Not (False)
     processed = models.BooleanField(default=False, null=True)
     reading_date = models.DateField(null=True)

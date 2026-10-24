@@ -62,8 +62,8 @@ def test_generate_endpoint_accepted_and_runs_task(auth_for):
     client = auth_for(office)
 
     resp = client.post("/api/v1/bills/generate/")
-    assert resp.status_code == 202
-    assert "task_id" in resp.json()["data"]
+    assert resp.status_code == 200
+    assert resp.json()["data"]["status"] == "COMPLETED"
     assert Bill.objects.count() == 1  # eager mode executed the task
 
 
@@ -112,3 +112,53 @@ def test_bill_list_query_count_constant_as_rows_grow(auth_for):
         f"N+1 detected: {len(first.captured_queries)} queries for 3 rows vs "
         f"{len(second.captured_queries)} queries for 10 rows"
     )
+
+
+def test_first_reading_50_bills_from_zero():
+    reading = MeterReadingFactory(last_reading=0, new_reading=50, processed=False)
+    result = generate_bills_for_unprocessed_readings()
+    bill = Bill.objects.get()
+    assert result['bills_created'] == 1
+    assert bill.unitsconsumed == 50
+    assert bill.payableamount == 150
+    assert bill.payable_after_due_date == 165
+    assert bill.billmonth == reading.reading_date.replace(day=1)
+
+
+def test_monthly_readings_aggregate_before_slab_calculation():
+    import datetime
+    meter = MeterFactory()
+    MeterReadingFactory(meter=meter, last_reading=0, new_reading=80, reading_date=datetime.date(2026, 10, 1))
+    MeterReadingFactory(meter=meter, last_reading=80, new_reading=150, reading_date=datetime.date(2026, 10, 24))
+    result = generate_bills_for_unprocessed_readings()
+    assert result['processed'] == 2
+    bill = Bill.objects.get()
+    assert bill.unitsconsumed == 150
+    assert bill.payableamount == 500
+    assert bill.payable_after_due_date == 550
+
+
+def test_later_reading_updates_unpaid_bill_without_resetting_slabs():
+    import datetime
+    meter = MeterFactory()
+    MeterReadingFactory(meter=meter, last_reading=0, new_reading=80, reading_date=datetime.date(2026, 10, 1))
+    generate_bills_for_unprocessed_readings()
+    MeterReadingFactory(meter=meter, last_reading=80, new_reading=150, reading_date=datetime.date(2026, 10, 24))
+    result = generate_bills_for_unprocessed_readings()
+    assert result['bills_updated'] == 1
+    assert Bill.objects.count() == 1
+    assert Bill.objects.get().payableamount == 500
+
+
+def test_paid_bill_remains_unchanged():
+    import datetime
+    meter = MeterFactory()
+    bill = BillFactory(meter=meter, billmonth=datetime.date(2026, 10, 1), paid=True)
+    reading = MeterReadingFactory(meter=meter, reading_date=datetime.date(2026, 10, 24))
+    original = bill.payableamount
+    result = generate_bills_for_unprocessed_readings()
+    bill.refresh_from_db()
+    reading.refresh_from_db()
+    assert result['skipped'] == 1
+    assert bill.payableamount == original
+    assert not reading.processed
