@@ -1,0 +1,49 @@
+name: Build SEBMS scanner APK
+on:
+  push:
+    branches: [scanner-apk-build]
+    paths: [mobile_scanner/**, .github/workflows/scanner-apk.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: mobile_scanner
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install tested Flutter SDK
+        working-directory: ${{ runner.temp }}
+        run: |
+          git clone --depth 1 --branch stable https://github.com/flutter/flutter.git flutter
+          git -C flutter fetch --depth 1 origin 737ba8f885dc774b53b442759999a312c9461e4e
+          git -C flutter checkout --detach FETCH_HEAD
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - name: Generate Android shell
+        run: |
+          flutter create --platforms=android --org com.sebms --project-name sebms_scanner --no-pub .
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/build.gradle.kts')
+          p.write_text(p.read_text().replace('com.sebms.sebms_scanner','com.sebms.meter_scanner').replace('minSdk = flutter.minSdkVersion','minSdk = 23'))
+          p=Path('android/app/src/main/AndroidManifest.xml')
+          p.write_text(p.read_text().replace('<application','<uses-permission android:name="android.permission.INTERNET" />\n    <application',1).replace('android:label="sebms_scanner"','android:label="SEBMS Meter Scanner"'))
+          PY
+      - run: flutter pub get --enforce-lockfile
+      - run: flutter analyze
+      - run: flutter test
+      - name: Build device-test APK
+        run: flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SEBMS-Meter-Scanner-Android-test
+          path: mobile_scanner/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

@@ -14,18 +14,26 @@ The app uses atomic `arrayUnion` with merge so concurrent submissions do not ove
 
 The single-document design inherits Firestore's document size limit and broad document access. It is a compatibility implementation, not a scalable per-reading schema. A future migration should use individual reading documents with assigned-reader rules and update the Django importer together.
 
-## Build and configure
+## Android configuration and build
 
-Flutter SDK is not installed in the authoring environment; analysis, widget tests, native compilation and device OCR have **not** been run. This directory contains app source, not an APK or generated native project.
+The generated Android project uses application ID `com.sebms.meter_scanner` and minSdk 23. Firebase Android client options are configured in `lib/firebase_options.dart` for project `sebms-81d12`, app ID `1:804634582053:android:0bd4e1338b9aa92f6c33cc`. These options contain a public client API key, never a service-account private key. Native `google-services.json` is not required because Firebase is initialized with explicit options.
 
-1. Install a current stable Flutter SDK and native Android/iOS toolchains.
-2. From this directory generate platform shells: `flutter create --platforms=android,ios --project-name sebms_scanner .`
-3. Resolve packages with `flutter pub get`; review versions and commit `pubspec.lock` for reproducible builds. The manifest leaves package resolution to the installed SDK rather than claiming untested pinned versions.
-4. Run `flutterfire configure` for the **same Firebase project** used by Django's service account. Add platform Firebase configurations. This source uses native `Firebase.initializeApp()`; ensure generated Android/iOS configurations are integrated. Never put the Django service-account private key in the app.
-5. Enable Firebase Email/Password authentication and provision reader accounts. Django login credentials are not automatically Firebase accounts.
-6. Configure Firestore rules in the Firebase console to permit only trusted provisioned readers to access this legacy document. Never enable public writes. For example use an admin-issued `meter_reader` custom claim; clients must not be able to assign it. Because the legacy array is shared, readers allowed to write can alter the entire document; migrate to per-reading records for stricter isolation.
-7. Android: use the minimum/compile SDK required by the resolved ML Kit package (at least minSdk23), add INTERNET permission to the main manifest, and verify camera capture on a physical device. iOS: set the minimum target required by ML Kit and add `NSCameraUsageDescription` to Info.plist with `Capture electricity meters for SEBMS readings`.
-8. Run `dart format lib test`, `flutter analyze`, `flutter test`, then `flutter run` on a physical device. Build with `flutter build apk` after verification.
+Firebase Email/Password authentication was enabled on 2026-10-24. Reader accounts must be provisioned separately; Django accounts do not automatically exist in Firebase. No accounts were created during setup. The backend document contract remains `meters/your_doc_id.meter_list`; its exact live document must be verified before operational use.
+
+Dependencies are pinned in `pubspec.yaml` and resolved in `pubspec.lock`. Install Flutter stable and Android SDK, then run:
+
+```sh
+flutter pub get
+flutter analyze
+flutter test
+flutter build apk --debug
+```
+
+The current build uses Android's debug signing configuration and is intended for device testing, not a production signing identity. Keep release signing keys outside Git.
+
+Validation completed on 2026-10-24: Flutter analyzer reports no issues and all three automated tests pass (reading schema, invalid readings and login password concealment). Native APK compilation and physical-device Firebase/OCR verification are separate checks; do not infer them from Dart test success.
+
+The Firebase console inspection reported public Firestore read/write rules. No rules were modified during setup. Restrict access to provisioned meter readers before operational rollout and verify existing client compatibility. Do not broaden access as a connection workaround.
 
 ## Acceptance checks
 
@@ -36,4 +44,4 @@ Flutter SDK is not installed in the authoring environment; analysis, widget test
 - Submit the identical payload twice and verify one array entry and one Django reading.
 - Test multiple devices, unknown meters, invalid values and the administrative correction path before production.
 
-No Firebase configuration, live writes, account creation, backend changes or production rule changes were performed while creating this source.
+Firebase Android registration and Email/Password provider setup were performed. No live meter writes, account creation, backend changes or production rule changes were performed.
