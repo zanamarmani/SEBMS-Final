@@ -57,3 +57,14 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action in ("create", "update", "partial_update"):
             return UserAdminSerializer
         return UserSerializer
+
+    def perform_destroy(self, instance):
+        from django.db import transaction
+        from core.services import firebase_users
+
+        with transaction.atomic():
+            user = User.objects.select_for_update().get(pk=instance.pk)
+            if user.firebase_uid:
+                user.is_active = False
+                firebase_users.sync_reader(user)
+            user.delete()

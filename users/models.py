@@ -23,6 +23,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True,default='example@example.com')
+    firebase_uid = models.CharField(max_length=128, null=True, blank=True, unique=True, editable=False)
     is_sdo = models.BooleanField(default=False)
     is_office_staff = models.BooleanField(default=False)
     is_meter_reader = models.BooleanField(default=False)

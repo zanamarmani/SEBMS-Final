@@ -28,13 +28,10 @@ def get_firestore_db() -> Any:
         return None
 
     try:
-        import firebase_admin
-        from firebase_admin import credentials, firestore
+        from firebase_admin import firestore
+        from core.services.firebase_users import get_auth_app
 
-        if not firebase_admin._apps:
-            cred = credentials.Certificate(settings.FIREBASE_CREDENTIALS_PATH)
-            firebase_admin.initialize_app(cred)
-        _firestore_db = firestore.client()
+        _firestore_db = firestore.client(app=get_auth_app())
         logger.info("Firestore client initialized")
         return _firestore_db
     except Exception:
