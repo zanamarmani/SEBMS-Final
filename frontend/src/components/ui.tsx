@@ -38,7 +38,7 @@ export function Button({
 }: ButtonProps) {
   const styles: Record<string, string> = {
     primary:
-      "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300 border border-transparent",
+      "bg-teal-700 text-white hover:bg-teal-800 disabled:bg-teal-300 border border-transparent",
     secondary:
       "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 disabled:text-gray-400",
     danger:
@@ -49,7 +49,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed",
+        "inline-flex items-center justify-center gap-2 ui-button rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed",
         styles[variant],
         className,
       )}
@@ -80,15 +80,15 @@ export function Card({
   return (
     <section
       className={cn(
-        "rounded-lg border border-gray-200 bg-white shadow-sm",
+        "ui-card rounded-2xl border border-gray-200 bg-white shadow-sm",
         className,
       )}
     >
       {(title || actions) && (
-        <header className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-4 py-3">
+        <header className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-5 py-4">
           <div>
             {title && (
-              <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
+              <h2 className="text-base font-semibold text-gray-900">{title}</h2>
             )}
             {description && (
               <p className="mt-0.5 text-xs text-gray-500">{description}</p>
@@ -97,7 +97,7 @@ export function Card({
           {actions && <div className="flex items-center gap-2">{actions}</div>}
         </header>
       )}
-      <div className="p-4">{children}</div>
+      <div className="p-5">{children}</div>
     </section>
   );
 }
@@ -118,10 +118,7 @@ export function Alert({
   return (
     <div
       role="alert"
-      className={cn(
-        "rounded-md border px-3 py-2 text-sm",
-        tones[tone],
-      )}
+      className={cn("rounded-md border px-3 py-2 text-sm", tones[tone])}
     >
       {children}
     </div>
@@ -177,24 +174,22 @@ export function Field({
       {hint && !error && (
         <span className="mt-1 block text-xs text-gray-500">{hint}</span>
       )}
-      {error && <span className="mt-1 block text-xs text-red-600">{error}</span>}
+      {error && (
+        <span className="mt-1 block text-xs text-red-600">{error}</span>
+      )}
     </label>
   );
 }
 
 const fieldClass =
-  "block w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50";
+  "block w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50";
 
-export function Input(
-  props: React.InputHTMLAttributes<HTMLInputElement>,
-) {
+export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   const { className, ...rest } = props;
   return <input className={cn(fieldClass, className)} {...rest} />;
 }
 
-export function Select(
-  props: React.SelectHTMLAttributes<HTMLSelectElement>,
-) {
+export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
   const { className, ...rest } = props;
   return <select className={cn(fieldClass, className)} {...rest} />;
 }
@@ -217,11 +212,11 @@ export function Table({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-left text-sm">
+      <table className="ui-table w-full text-left text-sm">
         <thead className="border-b border-gray-200 text-xs uppercase text-gray-500">
           <tr>
             {head.map((h, i) => (
-              <th key={i} className="px-2 py-2 font-medium">
+              <th key={i} className="px-3 py-3 font-semibold">
                 {h}
               </th>
             ))}
@@ -253,7 +248,9 @@ export function Td({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <td className={cn("px-2 py-2 text-gray-700", className)}>{children}</td>;
+  return (
+    <td className={cn("px-3 py-3.5 text-gray-700", className)}>{children}</td>
+  );
 }
 
 export function StatCard({
@@ -268,17 +265,19 @@ export function StatCard({
   tone?: "blue" | "green" | "amber" | "gray";
 }) {
   const tones: Record<string, string> = {
-    blue: "border-blue-200 bg-blue-50 text-blue-700",
-    green: "border-green-200 bg-green-50 text-green-700",
-    amber: "border-amber-200 bg-amber-50 text-amber-800",
-    gray: "border-gray-200 bg-gray-50 text-gray-700",
+    blue: "border-gray-200 bg-white text-teal-700",
+    green: "border-gray-200 bg-white text-green-700",
+    amber: "border-gray-200 bg-white text-amber-800",
+    gray: "border-gray-200 bg-white text-gray-700",
   };
   return (
-    <div className={cn("rounded-lg border p-4", tones[tone])}>
+    <div className={cn("stat-card rounded-2xl border p-5", tones[tone])}>
       <p className="text-xs font-medium uppercase tracking-wide opacity-80">
         {label}
       </p>
-      <p className="mt-1 text-2xl font-semibold text-gray-900">{value}</p>
+      <p className="mt-3 text-3xl font-semibold tracking-tight text-gray-900">
+        {value}
+      </p>
       {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
     </div>
   );

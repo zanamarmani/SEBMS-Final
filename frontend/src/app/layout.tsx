@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SEBMS — Electricity Billing Management",
-  description: "Smart Electricity Billing Management System (headless API SPA)",
+  description:
+    "Manage electricity readings, consumer accounts and billing in one connected workspace.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

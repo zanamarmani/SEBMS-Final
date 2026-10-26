@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Icon from "@/components/Icon";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -33,8 +34,8 @@ export default function LandingPage() {
             </p>
           ) : (
             <p className="mt-3 text-sm text-amber-700">
-              This account has no role assigned. Ask the administrator to
-              assign one.
+              This account has no role assigned. Ask the administrator to assign
+              one.
             </p>
           )}
           <Link
@@ -49,60 +50,147 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-6">
-      <div className="text-center">
-        <span className="rounded-md bg-blue-600 px-3 py-1.5 text-lg font-bold text-white">
-          SEBMS
-        </span>
-        <h1 className="mt-4 text-2xl font-semibold text-gray-900">
-          Smart Electricity Billing Management System
-        </h1>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-gray-500">
-          Headless API + role-based dashboards for SDOs, office staff, meter
-          readers and consumers — tariffs, meter readings, bill generation,
-          approvals and online payments.
-        </p>
-      </div>
-      <div className="flex gap-3">
-        <Link
-          href="/login"
-          className="rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          Login
+    <main className="public-page">
+      <header className="public-nav">
+        <Link href="/" className="brand">
+          <span className="brand-mark">
+            <Icon name="bolt" size={24} />
+          </span>
+          <span>
+            SEBMS<small>ENERGY MANAGEMENT</small>
+          </span>
         </Link>
-        <Link
-          href="/register"
-          className="rounded-md border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Consumer registration
-        </Link>
-      </div>
-      <section className="w-full max-w-3xl rounded-xl border border-blue-200 bg-blue-50 p-6" aria-labelledby="scanner-heading">
-        <h2 id="scanner-heading" className="text-xl font-semibold text-gray-900">SEBMS Meter Scanner for Android</h2>
-        <p className="mt-2 text-sm text-gray-600">Scan your meter, verify its number and reading, and sync with SEBMS using your assigned reader account.</p>
-        {apkUrl ? (
-          <a href={apkUrl} className="mt-4 inline-flex rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700">Download Android APK</a>
-        ) : (
-          <p className="mt-4 text-sm font-medium text-gray-600">Android download coming soon</p>
-        )}
-        <p className="mt-3 text-xs text-gray-500">Android only. A provisioned meter-reader account is required. After downloading, open the APK and follow Android’s installation prompts.</p>
-      </section>
-      <div className="grid max-w-3xl gap-3 text-left sm:grid-cols-2 md:grid-cols-4">
-        {[
-          ["SDO", "Tariffs, approvals, users, stats"],
-          ["Office", "Meters, readings, bills, payments"],
-          ["Meter reader", "Capture readings with photos"],
-          ["Consumer", "Bills & instant mock payments"],
-        ].map(([title, desc]) => (
-          <div
-            key={title}
-            className="rounded-lg border border-gray-200 bg-white p-3"
-          >
-            <p className="text-sm font-semibold text-gray-900">{title}</p>
-            <p className="mt-1 text-xs text-gray-500">{desc}</p>
+        <nav className="public-nav-links" aria-label="Public navigation">
+          <a href="#features">Platform</a>
+          <a href="#scanner">Meter scanner</a>
+          <Link href="/login" className="secondary-link">
+            Sign in <Icon name="arrow" size={15} />
+          </Link>
+        </nav>
+      </header>
+      <section className="hero">
+        <div>
+          <p className="page-eyebrow">A smarter way to manage electricity</p>
+          <h1>
+            Less paperwork.
+            <br />
+            More clarity.
+            <br />
+            <em>Better energy.</em>
+          </h1>
+          <p className="hero-description">
+            Bring your meter readings, consumers and electricity bills together.
+            One connected workspace for your team and the people you serve.
+          </p>
+          <div className="hero-actions">
+            <Link href="/login" className="primary-link">
+              Open your dashboard <Icon name="arrow" size={17} />
+            </Link>
+            <Link href="/register" className="secondary-link">
+              Register as a consumer
+            </Link>
           </div>
-        ))}
-      </div>
+          <p className="hero-note">
+            <Icon name="shield" size={15} /> Dedicated access for every role in
+            your team
+          </p>
+        </div>
+        <div
+          className="energy-art"
+          role="img"
+          aria-label="Illustration of a smart electricity meter"
+        >
+          <div className="meter-illustration">
+            <div className="meter-brand">
+              SEBMS <Icon name="bolt" size={16} />
+            </div>
+            <div className="meter-screen">
+              00000<small>kWh</small>
+            </div>
+            <div className="meter-dial">
+              <Icon name="bolt" size={27} />
+            </div>
+            <div className="meter-bottom">SMART ELECTRICITY METER</div>
+          </div>
+          <div className="art-chip first">
+            <Icon name="check" /> Clear, accurate readings
+          </div>
+          <div className="art-chip second">
+            <Icon name="bill" /> From readings to billing
+          </div>
+        </div>
+      </section>
+      <section className="section-container" id="features">
+        <p className="page-eyebrow">One platform. Every role.</p>
+        <h2 className="page-heading">Built around the way you work.</h2>
+        <p className="page-description">
+          The right tools for each person, from the field to the office.
+        </p>
+        <div className="feature-grid">
+          {[
+            [
+              "dashboard",
+              "SDO workspace",
+              "Review consumer applications, manage tariffs and oversee your team.",
+            ],
+            [
+              "bill",
+              "Office operations",
+              "Organize meters, import readings, generate bills and track payments.",
+            ],
+            [
+              "meter",
+              "Meter readers",
+              "Capture meter readings and photos in the field with the Android scanner.",
+            ],
+            [
+              "users",
+              "Consumer portal",
+              "Check your electricity bills, payment history and account details.",
+            ],
+          ].map(([icon, title, description]) => (
+            <article className="feature-card" key={title}>
+              <Icon name={icon} size={27} />
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="section-container" id="scanner">
+        <div className="scanner-panel">
+          <div>
+            <p className="page-eyebrow">SEBMS for Android</p>
+            <h2>
+              Your fieldwork,
+              <br />
+              without the paperwork.
+            </h2>
+            <p>
+              Capture a meter reading, verify the details and sync it with
+              SEBMS. Download the Android meter scanner and sign in with your
+              assigned reader account.
+            </p>
+          </div>
+          <div className="scanner-download">
+            {apkUrl ? (
+              <a className="primary-link" href={apkUrl}>
+                <Icon name="download" size={18} /> Download Android APK
+              </a>
+            ) : (
+              <p>Android download coming soon</p>
+            )}
+            <p>
+              For Android devices. Install the APK after downloading. Your SDO
+              provides your reader account.
+            </p>
+          </div>
+        </div>
+      </section>
+      <footer className="public-footer">
+        <span>SEBMS · Smart Electricity Billing Management</span>
+        <span>Connected readings. Clearer billing.</span>
+      </footer>
     </main>
   );
 }
