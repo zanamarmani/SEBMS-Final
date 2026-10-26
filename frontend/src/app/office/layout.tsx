@@ -18,7 +18,7 @@ export default function OfficeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <RoleGuard allow={["office_staff", "sdo"]}>
+    <RoleGuard allow={["office_staff"]}>
       <AppShell nav={NAV}>{children}</AppShell>
     </RoleGuard>
   );

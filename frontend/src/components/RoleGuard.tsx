@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { homeFor, useAuth } from "@/lib/auth";
+import { canAccessRoles } from "@/lib/routing";
 import type { Role } from "@/lib/types";
 import { CenteredSpinner } from "./ui";
 
@@ -24,15 +25,13 @@ export default function RoleGuard({
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
       return;
     }
-    const allowed =
-      user.is_superuser || (user.role !== null && allow.includes(user.role));
+    const allowed = canAccessRoles(user, allow);
     if (!allowed) router.replace(homeFor(user));
   }, [status, user, allow, pathname, router]);
 
   if (status !== "ready" || !user) return <CenteredSpinner />;
 
-  const allowed =
-    user.is_superuser || (user.role !== null && allow.includes(user.role));
+  const allowed = canAccessRoles(user, allow);
   if (!allowed) return <CenteredSpinner />;
 
   return <>{children}</>;

@@ -22,14 +22,7 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-export function homeFor(user: User | null): string {
-  if (!user) return "/login";
-  if (user.is_superuser || user.role === "sdo") return "/sdo";
-  if (user.role === "office_staff") return "/office";
-  if (user.role === "meter_reader") return "/reader";
-  if (user.role === "consumer") return "/consumer";
-  return "/";
-}
+export { homeFor } from "./routing";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);

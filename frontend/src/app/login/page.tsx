@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { loginDestination } from "@/lib/routing";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
 import { CenteredSpinner, Button, Field, Input, Alert } from "@/components/ui";
-import { homeFor, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 
 function LoginForm() {
   const { user, status, login } = useAuth();
@@ -19,7 +20,7 @@ function LoginForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  const destination = user ? next || homeFor(user) : "/login";
+  const destination = user ? loginDestination(user, next) : "/login";
 
   useEffect(() => {
     if (status === "ready" && user) router.replace(destination);
@@ -33,7 +34,7 @@ function LoginForm() {
     setError("");
     try {
       const me = await login(email.trim(), password);
-      router.replace(next || homeFor(me));
+      router.replace(loginDestination(me, next));
     } catch (err) {
       setError(
         err instanceof Error && err.message ? err.message : "Login failed.",
